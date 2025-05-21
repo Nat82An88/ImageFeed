@@ -3,6 +3,7 @@ import UIKit
 class ImagesListViewController: UIViewController {
     
     // MARK: - IB Outlets
+    
     @IBOutlet private var tableView: UITableView!
     
     // MARK: - Private Properties
@@ -39,10 +40,12 @@ class ImagesListViewController: UIViewController {
         if indexPath.row%2 == 0 {
             cell.likeButton.setImage(UIImage(named: "Active"), for: .normal)
         } else {
-            cell.likeButton.setImage(UIImage(named: "No Active"), for: .normal)
+            cell.likeButton.setImage(UIImage(named: "notActive"), for: .normal)
         }
     }
 }
+
+// MARK: - UITableViewDataSource
 
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -56,6 +59,8 @@ extension ImagesListViewController: UITableViewDataSource {
         return imageListCell
     }
 }
+
+// MARK: - UITableViewDelegate
 
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {}
