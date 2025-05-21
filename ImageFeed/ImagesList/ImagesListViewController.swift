@@ -2,27 +2,59 @@ import UIKit
 
 class ImagesListViewController: UIViewController {
     
+    // MARK: - IB Outlets
     @IBOutlet private var tableView: UITableView!
+    
+    // MARK: - Private Properties
+    
+    private let photoName: [String] = Array(0..<20).map { "\($0)" }
+    private lazy var dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.timeStyle = .none
+        return formatter
+    }()
+    
+    // MARK: - View Life Cycles
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tableView.rowHeight = 200
+        tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
     
-    func configCell(for cell: ImagesListCell) { }
+    // MARK: - Private Methods
+    
+    func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
+        guard indexPath.row < photoName.count else { return }
+        
+        let imageName = photoName[indexPath.row]
+        guard let image = UIImage(named: imageName) else { return }
+        cell.cellImage.image = image
+        
+        let currentDate = Date()
+        let formattedDate = dateFormatter.string(from: currentDate)
+        cell.dateLabel.text = formattedDate
+        
+        if indexPath.row%2 == 0 {
+            cell.likeButton.setImage(UIImage(named: "Active"), for: .normal)
+        } else {
+            cell.likeButton.setImage(UIImage(named: "No Active"), for: .normal)
+        }
+    }
 }
 
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 1
+        return photoName.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
-        guard let imagesListCell = cell as? ImagesListCell else { fatalError("Не удалось преобразовать ячейку к типу ImagesListCell") }
-        configCell(for: imagesListCell)
-        return imagesListCell
+        guard let imageListCell = cell as? ImagesListCell else { fatalError("Не удалось преобразовать ячейку к типу ImagesListCell") }
+        configCell(for: imageListCell, with: indexPath)
+        return imageListCell
     }
 }
 

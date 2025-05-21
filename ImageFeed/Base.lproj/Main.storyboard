@@ -42,9 +42,9 @@
                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                     <state key="normal" image="Active"/>
                                                 </button>
-                                                <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="18 мая 2025" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xfg-GK-cYV" userLabel="Date Label">
-                                                    <rect key="frame" x="8" y="128" width="77" height="16"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="18 мая 2025" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xfg-GK-cYV" userLabel="Date Label">
+                                                    <rect key="frame" x="8" y="128" width="73.666666666666671" height="16"/>
+                                                    <fontDescription key="fontDescription" name="YSDisplay-Medium" family="YS Display" pointSize="13"/>
                                                     <color key="textColor" name="YPWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
@@ -77,6 +77,7 @@
                                         <connections>
                                             <outlet property="DateLabel" destination="Xfg-GK-cYV" id="r5n-Up-E1p"/>
                                             <outlet property="LikeButton" destination="Sme-P0-ge2" id="XyS-GD-G7c"/>
+                                            <outlet property="cellImage" destination="bMz-Jp-NO0" id="roU-Wo-JJI"/>
                                             <outlet property="dateLabel" destination="Xfg-GK-cYV" id="srD-d5-TVr"/>
                                             <outlet property="likeButton" destination="Sme-P0-ge2" id="xcS-GP-B3U"/>
                                         </connections>
