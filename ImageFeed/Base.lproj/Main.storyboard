@@ -29,7 +29,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="bMz-Jp-NO0" userLabel="Cell Image">
-                                                    <rect key="frame" x="0.0" y="0.0" width="393" height="152"/>
+                                                    <rect key="frame" x="16" y="4" width="361" height="144"/>
                                                     <userDefinedRuntimeAttributes>
                                                         <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
                                                         <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -38,27 +38,27 @@
                                                     </userDefinedRuntimeAttributes>
                                                 </imageView>
                                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sme-P0-ge2" userLabel="Like Button">
-                                                    <rect key="frame" x="349" y="0.0" width="44" height="44"/>
+                                                    <rect key="frame" x="333" y="4" width="44" height="44"/>
                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                     <state key="normal" image="Active"/>
                                                 </button>
                                                 <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="18 мая 2025" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Xfg-GK-cYV" userLabel="Date Label">
-                                                    <rect key="frame" x="8" y="128" width="73.666666666666671" height="16"/>
-                                                    <fontDescription key="fontDescription" name="YSDisplay-Medium" family="YS Display" pointSize="13"/>
+                                                    <rect key="frame" x="24" y="124.66666666666667" width="77" height="15.333333333333329"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                     <color key="textColor" name="YPWhite"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="bMz-Jp-NO0" secondAttribute="trailing" id="1BW-wF-Uvb"/>
+                                                <constraint firstAttribute="trailing" secondItem="bMz-Jp-NO0" secondAttribute="trailing" constant="16" id="1BW-wF-Uvb"/>
                                                 <constraint firstItem="Sme-P0-ge2" firstAttribute="trailing" secondItem="bMz-Jp-NO0" secondAttribute="trailing" id="DhT-C0-hKm"/>
                                                 <constraint firstItem="Sme-P0-ge2" firstAttribute="top" secondItem="bMz-Jp-NO0" secondAttribute="top" id="FcC-SN-dsR"/>
                                                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Xfg-GK-cYV" secondAttribute="trailing" constant="8" id="FzJ-Pa-lfZ"/>
-                                                <constraint firstItem="bMz-Jp-NO0" firstAttribute="top" secondItem="IDv-mS-krz" secondAttribute="top" id="I5W-oX-FFT"/>
-                                                <constraint firstItem="bMz-Jp-NO0" firstAttribute="leading" secondItem="IDv-mS-krz" secondAttribute="leading" id="RZr-Ve-tL6"/>
+                                                <constraint firstItem="bMz-Jp-NO0" firstAttribute="top" secondItem="IDv-mS-krz" secondAttribute="top" constant="4" id="I5W-oX-FFT"/>
+                                                <constraint firstItem="bMz-Jp-NO0" firstAttribute="leading" secondItem="IDv-mS-krz" secondAttribute="leading" constant="16" id="RZr-Ve-tL6"/>
                                                 <constraint firstItem="Xfg-GK-cYV" firstAttribute="leading" secondItem="bMz-Jp-NO0" secondAttribute="leading" constant="8" id="Tm3-wF-bVh"/>
                                                 <constraint firstItem="Xfg-GK-cYV" firstAttribute="bottom" secondItem="bMz-Jp-NO0" secondAttribute="bottom" constant="-8" id="dgh-bG-mNr"/>
-                                                <constraint firstAttribute="bottom" secondItem="bMz-Jp-NO0" secondAttribute="bottom" id="gCn-6R-sbM"/>
+                                                <constraint firstAttribute="bottom" secondItem="bMz-Jp-NO0" secondAttribute="bottom" constant="4" id="gCn-6R-sbM"/>
                                             </constraints>
                                             <userDefinedRuntimeAttributes>
                                                 <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">

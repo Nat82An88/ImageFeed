@@ -10,5 +10,6 @@ final class ImagesListCell: UITableViewCell {
     
     // MARK: - Private Properties
     
+    
     static let reuseIdentifier = "ImagesListCell"
 }
