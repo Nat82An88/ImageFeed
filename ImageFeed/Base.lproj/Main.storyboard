@@ -49,6 +49,7 @@
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                             </subviews>
+                                            <color key="backgroundColor" name="YPBlack"/>
                                             <constraints>
                                                 <constraint firstAttribute="trailing" secondItem="bMz-Jp-NO0" secondAttribute="trailing" constant="16" id="1BW-wF-Uvb"/>
                                                 <constraint firstItem="Sme-P0-ge2" firstAttribute="trailing" secondItem="bMz-Jp-NO0" secondAttribute="trailing" id="DhT-C0-hKm"/>
