@@ -24,9 +24,9 @@ class ImagesListViewController: UIViewController {
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
     
-    // MARK: - Public Methods
+    // MARK: - Private Methods
     
-    func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
+    private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         guard indexPath.row < photosName.count else { return }
         
         let imageName = photosName[indexPath.row]
@@ -37,11 +37,10 @@ class ImagesListViewController: UIViewController {
         let formattedDate = dateFormatter.string(from: currentDate)
         cell.dateLabel.text = formattedDate
         
-        if indexPath.row%2 == 0 {
-            cell.likeButton.setImage(UIImage(named: "Active"), for: .normal)
-        } else {
-            cell.likeButton.setImage(UIImage(named: "notActive"), for: .normal)
-        }
+        let buttonImage = indexPath.row%2 == 0
+        ? UIImage(named: "Active")
+        : UIImage(named: "notActive")
+        cell.likeButton.setImage(buttonImage, for: .normal)
     }
 }
 
