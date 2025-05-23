@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="58Z-8X-JqS">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -116,38 +117,42 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Avatar" translatesAutoresizingMaskIntoConstraints="NO" id="e6Q-b1-8cG" userLabel="Avatar Image View">
-                                <rect key="frame" x="16" y="150" width="70" height="55.333333333333343"/>
+                                <rect key="frame" x="16" y="150" width="70" height="70"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="e6Q-b1-8cG" secondAttribute="height" multiplier="110:87" id="Mep-1F-d18"/>
+                                    <constraint firstAttribute="width" secondItem="e6Q-b1-8cG" secondAttribute="height" multiplier="1:1" id="Mep-1F-d18"/>
                                     <constraint firstAttribute="width" constant="70" id="OBJ-BJ-Abo"/>
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Andrei Vasenkov" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="3ZJ-Ep-xFe" userLabel="Name Label">
-                                <rect key="frame" x="16" y="213.33333333333334" width="174" height="27.666666666666657"/>
+                                <rect key="frame" x="16" y="228" width="174" height="27.666666666666657"/>
                                 <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="23"/>
                                 <color key="textColor" name="YPWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ir9-1c-mpZ" userLabel="Logout Button">
-                                <rect key="frame" x="309" y="155.66666666666666" width="68" height="44"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dvS-Pm-x92" userLabel="Logout Button">
+                                <rect key="frame" x="333" y="163" width="44" height="44"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="44" id="1YH-3W-vxf"/>
-                                    <constraint firstAttribute="height" constant="44" id="K5i-M8-bqC"/>
+                                    <constraint firstAttribute="width" constant="44" id="buK-0R-6Wv"/>
+                                    <constraint firstAttribute="height" constant="44" id="dJe-kt-aV1"/>
                                 </constraints>
-                                <state key="normal" title="Button"/>
+                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                                <state key="normal" image="Exit">
+                                    <color key="titleColor" name="YP Red "/>
+                                    <color key="titleShadowColor" systemColor="systemFillColor"/>
+                                </state>
                                 <buttonConfiguration key="configuration" style="plain" image="Exit"/>
                                 <connections>
-                                    <action selector="didTapLogoutButton" destination="58Z-8X-JqS" eventType="touchUpInside" id="Ss4-1p-qU5"/>
+                                    <action selector="didTapLogoutButton" destination="58Z-8X-JqS" eventType="touchUpInside" id="oDm-se-bX2"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="NatAn" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vk4-2P-U6J" userLabel="Login Name Label">
-                                <rect key="frame" x="16" y="255" width="52" height="16"/>
+                                <rect key="frame" x="16" y="263.66666666666669" width="174" height="16"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <color key="textColor" name="YPWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Descriptoin Text" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cRt-B2-UnA" userLabel="Description Label">
-                                <rect key="frame" x="16" y="273" width="174" height="16"/>
+                                <rect key="frame" x="16" y="287.66666666666669" width="174" height="16"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                 <color key="textColor" name="YPWhite"/>
                                 <nil key="highlightedColor"/>
@@ -156,27 +161,26 @@
                         <viewLayoutGuide key="safeArea" id="897-Bs-EiQ"/>
                         <color key="backgroundColor" name="YPBlack"/>
                         <constraints>
-                            <constraint firstItem="vk4-2P-U6J" firstAttribute="trailing" secondItem="3ZJ-Ep-xFe" secondAttribute="trailing" constant="-122" id="1ZW-h4-svK"/>
+                            <constraint firstItem="897-Bs-EiQ" firstAttribute="trailing" secondItem="dvS-Pm-x92" secondAttribute="trailing" constant="16" id="00X-sk-GZp"/>
+                            <constraint firstItem="vk4-2P-U6J" firstAttribute="trailing" secondItem="3ZJ-Ep-xFe" secondAttribute="trailing" id="1ZW-h4-svK"/>
                             <constraint firstItem="e6Q-b1-8cG" firstAttribute="top" secondItem="897-Bs-EiQ" secondAttribute="top" constant="32" id="3QA-Ez-zbD"/>
                             <constraint firstItem="3ZJ-Ep-xFe" firstAttribute="top" secondItem="e6Q-b1-8cG" secondAttribute="bottom" constant="8" id="4lM-ii-Ftm"/>
                             <constraint firstItem="cRt-B2-UnA" firstAttribute="trailing" secondItem="3ZJ-Ep-xFe" secondAttribute="trailing" id="B3i-pe-Tf0"/>
-                            <constraint firstItem="897-Bs-EiQ" firstAttribute="trailing" secondItem="ir9-1c-mpZ" secondAttribute="trailing" constant="16" id="En4-5C-h97"/>
                             <constraint firstItem="3ZJ-Ep-xFe" firstAttribute="leading" secondItem="897-Bs-EiQ" secondAttribute="leading" constant="16" id="IS3-GV-hj8"/>
                             <constraint firstItem="3ZJ-Ep-xFe" firstAttribute="leading" secondItem="e6Q-b1-8cG" secondAttribute="leading" id="JYR-mz-hiU"/>
-                            <constraint firstItem="vk4-2P-U6J" firstAttribute="top" secondItem="3ZJ-Ep-xFe" secondAttribute="bottom" constant="14" id="L5q-Wp-cQA"/>
+                            <constraint firstItem="vk4-2P-U6J" firstAttribute="top" secondItem="3ZJ-Ep-xFe" secondAttribute="bottom" constant="8" id="L5q-Wp-cQA"/>
+                            <constraint firstItem="e6Q-b1-8cG" firstAttribute="centerY" secondItem="dvS-Pm-x92" secondAttribute="centerY" id="QRG-Br-oWk"/>
                             <constraint firstItem="e6Q-b1-8cG" firstAttribute="leading" secondItem="897-Bs-EiQ" secondAttribute="leading" constant="16" id="SZN-Eh-Mlf"/>
                             <constraint firstItem="vk4-2P-U6J" firstAttribute="leading" secondItem="3ZJ-Ep-xFe" secondAttribute="leading" id="VO3-hg-Fbc"/>
                             <constraint firstItem="cRt-B2-UnA" firstAttribute="leading" secondItem="3ZJ-Ep-xFe" secondAttribute="leading" id="ZHz-Ng-VS3"/>
-                            <constraint firstItem="cRt-B2-UnA" firstAttribute="top" secondItem="vk4-2P-U6J" secondAttribute="bottom" constant="2" id="eHL-bN-d5i"/>
-                            <constraint firstItem="ir9-1c-mpZ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="e6Q-b1-8cG" secondAttribute="trailing" constant="8" symbolic="YES" id="ym1-XF-3fx"/>
-                            <constraint firstItem="e6Q-b1-8cG" firstAttribute="centerY" secondItem="ir9-1c-mpZ" secondAttribute="centerY" id="zF9-XC-zwV"/>
+                            <constraint firstItem="cRt-B2-UnA" firstAttribute="top" secondItem="vk4-2P-U6J" secondAttribute="bottom" constant="8" id="eHL-bN-d5i"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="avatarImageView" destination="e6Q-b1-8cG" id="8oL-Zd-9PO"/>
                         <outlet property="descriptionLabel" destination="cRt-B2-UnA" id="eqQ-4J-Bx5"/>
                         <outlet property="loginNameLabel" destination="vk4-2P-U6J" id="OTx-bD-V8P"/>
-                        <outlet property="logoutButton" destination="ir9-1c-mpZ" id="UfE-Nq-Mbw"/>
+                        <outlet property="logoutButton" destination="dvS-Pm-x92" id="uVl-ha-z3G"/>
                         <outlet property="nameLabel" destination="3ZJ-Ep-xFe" id="fsR-pd-fGB"/>
                     </connections>
                 </viewController>
@@ -190,11 +194,17 @@
         <image name="Active" width="44" height="44"/>
         <image name="Avatar" width="70" height="70"/>
         <image name="Exit" width="44" height="44"/>
+        <namedColor name="YP Red ">
+            <color red="0.96078431372549022" green="0.41960784313725491" blue="0.42352941176470588" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <namedColor name="YPBlack">
             <color red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="YPWhite">
             <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
+        <systemColor name="systemFillColor">
+            <color red="0.47058823529999999" green="0.47058823529999999" blue="0.50196078430000002" alpha="0.20000000000000001" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
     </resources>
 </document>
