@@ -16,6 +16,7 @@ final class SingleImageViewController: UIViewController {
             activityItems: [image],
             applicationActivities: nil
         )
+        share.overrideUserInterfaceStyle = .dark
         present(share, animated: true, completion: nil)
     }
     
@@ -63,7 +64,7 @@ extension SingleImageViewController: UIScrollViewDelegate {
         return imageView
     }
     func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
-        guard let image = image else { return }
+        guard let image else { return }
         rescaleAndCenterImageInScrollView(image: image)
     }
 }

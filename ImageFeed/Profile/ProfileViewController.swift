@@ -2,12 +2,15 @@ import UIKit
 
 final class ProfileViewController: UIViewController {
     
+    // MARK: - Private Properties
+    
     private var imageView: UIImageView!
     private var nameLabel: UILabel!
     private var loginNameLabel: UILabel!
     private var descriptionLabel: UILabel!
     private var logoutButton: UIButton!
     
+    // MARK: - View Life Cycles
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,9 +22,11 @@ final class ProfileViewController: UIViewController {
         setupLogoutButton()
     }
     
+    // MARK: - Private Methods
+    
     private func setupAvatarImage() {
-       let avatarImage = UIImage(systemName: "person.crop.circle.fill")
-     imageView = UIImageView(image: avatarImage)
+        let avatarImage = UIImage(named: "Avatar")
+        imageView = UIImageView(image: avatarImage)
         imageView.tintColor = .ypGray
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -76,7 +81,7 @@ final class ProfileViewController: UIViewController {
     
     private func setupLogoutButton() {
         let logoutButton = UIButton.systemButton(
-            with: UIImage(systemName: "ipad.and.arrow.forward")!,
+            with: UIImage(named: "Exit")!,
             target: self,
             action: #selector(Self.didTapLogoutButton)
         )
@@ -92,5 +97,5 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private func didTapLogoutButton() {
-   }
+    }
 }
