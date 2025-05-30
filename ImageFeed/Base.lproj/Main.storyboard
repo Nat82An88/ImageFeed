@@ -160,13 +160,13 @@
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7qj-uK-vj2">
                                 <rect key="frame" x="-20" y="-20" width="433" height="892"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="Zy6-Uq-kZx" userLabel="Image View">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="0" translatesAutoresizingMaskIntoConstraints="NO" id="Zy6-Uq-kZx" userLabel="Image View">
                                         <rect key="frame" x="20" y="20" width="393" height="852"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                     </imageView>
                                 </subviews>
-                                <viewLayoutGuide key="contentLayoutGuide" id="fvH-0x-UeG"/>
-                                <viewLayoutGuide key="frameLayoutGuide" id="Put-JL-urJ"/>
+                                <viewLayoutGuide key="contentLayoutGuide" id="xfx-0d-A6h"/>
+                                <viewLayoutGuide key="frameLayoutGuide" id="yR1-F7-m4Z"/>
                                 <connections>
                                     <outlet property="delegate" destination="Lo8-9C-gvd" id="iVi-VO-lPE"/>
                                 </connections>
@@ -211,14 +211,14 @@
                         <viewLayoutGuide key="safeArea" id="s2J-No-dh8"/>
                         <color key="backgroundColor" name="YPBlack"/>
                         <constraints>
-                            <constraint firstItem="dcP-Ri-azI" firstAttribute="leading" secondItem="s2J-No-dh8" secondAttribute="leading" constant="8" id="7kA-er-1e5"/>
                             <constraint firstItem="7qj-uK-vj2" firstAttribute="leading" secondItem="s2J-No-dh8" secondAttribute="leading" id="ENJ-Ju-Oas"/>
-                            <constraint firstItem="7qj-uK-vj2" firstAttribute="top" secondItem="s2J-No-dh8" secondAttribute="top" id="M5d-cV-H03"/>
+                            <constraint firstItem="7qj-uK-vj2" firstAttribute="top" secondItem="rS3-j7-yaT" secondAttribute="top" id="M5d-cV-H03"/>
                             <constraint firstItem="1nj-Dy-CsY" firstAttribute="centerX" secondItem="s2J-No-dh8" secondAttribute="centerX" id="PjM-9R-9k5"/>
-                            <constraint firstItem="s2J-No-dh8" firstAttribute="bottom" secondItem="7qj-uK-vj2" secondAttribute="bottom" id="Txw-N1-TFz"/>
+                            <constraint firstItem="dcP-Ri-azI" firstAttribute="leading" secondItem="s2J-No-dh8" secondAttribute="leading" constant="8" id="SDB-vf-Ra3"/>
+                            <constraint firstAttribute="bottom" secondItem="7qj-uK-vj2" secondAttribute="bottom" id="Txw-N1-TFz"/>
                             <constraint firstItem="s2J-No-dh8" firstAttribute="trailing" secondItem="7qj-uK-vj2" secondAttribute="trailing" id="ViS-qz-O2c"/>
                             <constraint firstItem="s2J-No-dh8" firstAttribute="bottom" secondItem="1nj-Dy-CsY" secondAttribute="bottom" constant="17" id="ene-uH-u9n"/>
-                            <constraint firstItem="dcP-Ri-azI" firstAttribute="top" secondItem="s2J-No-dh8" secondAttribute="top" constant="8" id="jqn-Eg-X8t"/>
+                            <constraint firstItem="dcP-Ri-azI" firstAttribute="top" secondItem="s2J-No-dh8" secondAttribute="top" constant="8" id="jLG-9L-IVa"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="5it-dG-ZXB"/>
