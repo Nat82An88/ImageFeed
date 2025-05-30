@@ -2,6 +2,10 @@ import UIKit
 
 final class SingleImageViewController: UIViewController {
     
+    // MARK: - Public Properties
+    
+    var image: UIImage?
+    
     // MARK: - IB Outlets
     
     @IBOutlet private var imageView: UIImageView!
@@ -20,10 +24,6 @@ final class SingleImageViewController: UIViewController {
         present(share, animated: true, completion: nil)
     }
     
-    // MARK: - Public Properties
-    
-    var image: UIImage?
-    
     // MARK: - View Life Cycles
     
     override func viewDidLoad() {
@@ -36,6 +36,7 @@ final class SingleImageViewController: UIViewController {
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
         
+        imageView.contentMode = .center
         rescaleAndCenterImageInScrollView(image: image)
     }
     
@@ -51,9 +52,9 @@ final class SingleImageViewController: UIViewController {
         let vScale = visibleRectSize.height / imageSize.height
         let scale = min(maxZoomScale, max(minZoomScale, max(hScale, vScale)))
         scrollView.setZoomScale(scale, animated: false)
-        let xInset = max((scrollView.bounds.width - imageSize.width * scale) / 2, 0)
-        let yInset = max((scrollView.bounds.height - imageSize.height * scale) / 2, 0)
-        scrollView.contentInset = UIEdgeInsets(top: yInset, left: xInset, bottom: yInset, right: xInset)
+        let xOffset = max((scrollView.bounds.width - imageSize.width * scale) / 2, 0)
+        let yOffset = max((scrollView.bounds.height - imageSize.height * scale) / 2, 0)
+        imageView.center = CGPoint(x: scrollView.bounds.midX + xOffset, y: scrollView.bounds.midY + yOffset)
     }
 }
 
@@ -66,8 +67,6 @@ extension SingleImageViewController: UIScrollViewDelegate {
     func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
         guard let image else { return }
         rescaleAndCenterImageInScrollView(image: image)
+        imageView.center = CGPoint(x: scrollView.bounds.midX, y: scrollView.bounds.midY)
     }
 }
-
-
-
