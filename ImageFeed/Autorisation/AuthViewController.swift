@@ -6,7 +6,7 @@ final class AuthViewController: UIViewController {
     
     private let showWebViewSegueIdentifier = "ShowWebView"
     
-    // MARK: - Overrides Methods
+    // MARK: - View Life Cycles
     
     override func viewDidLoad() {
         super.viewDidLoad()

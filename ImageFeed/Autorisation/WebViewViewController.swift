@@ -10,7 +10,6 @@ protocol WebViewViewControllerDelegate: AnyObject {
     func webViewViewControllerDidCancel(_ vc: WebViewViewController)
 }
 
-
 final class WebViewViewController: UIViewController {
     
     // MARK: - Public Properties
@@ -19,7 +18,10 @@ final class WebViewViewController: UIViewController {
     
     // MARK: - IB Outlets
     
+    @IBOutlet private var progressView: UIProgressView!
     @IBOutlet private var webView: WKWebView!
+    
+    // MARK: - Actions
     
     @IBAction private func didTapBackButton(_ sender: Any?) {
         dismiss(animated: true, completion: nil)
@@ -31,10 +33,26 @@ final class WebViewViewController: UIViewController {
         super.viewDidLoad()
         
         webView.navigationDelegate = self
+        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
+        
         loadAuthView()
     }
     
+    // MARK: - KVO
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == #keyPath(WKWebView.estimatedProgress) {
+            updateProgress()
+        } else {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+        }
+    }
     // MARK: - Private Methods
+    
+    private func updateProgress() {
+        progressView.progress = Float(webView.estimatedProgress)
+        progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.001
+    }
     
     private func loadAuthView() {
         guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
@@ -54,6 +72,12 @@ final class WebViewViewController: UIViewController {
         let request = URLRequest(url: url)
         webView.load(request)
     }
+    
+    // MARK: - Deinitialization
+    
+    deinit {
+        webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
+    }
 }
 
 // MARK: - WKNavigationDelegate
@@ -67,7 +91,7 @@ extension WebViewViewController: WKNavigationDelegate {
         decidePolicyFor navigationAction: WKNavigationAction,
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
-        if let code = code(from: navigationAction) {
+        if code(from: navigationAction) != nil {
             decisionHandler(.cancel)
         } else {
             decisionHandler(.allow)

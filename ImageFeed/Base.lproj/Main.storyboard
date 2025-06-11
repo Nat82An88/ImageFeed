@@ -328,12 +328,20 @@
                                     <action selector="didTapBackButton:" destination="AmD-qL-Miq" eventType="touchUpInside" id="YWj-QI-SjS"/>
                                 </connections>
                             </button>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="zV6-Gd-7GK">
+                                <rect key="frame" x="0.0" y="59" width="393" height="4"/>
+                                <color key="tintColor" name="YPBlack"/>
+                                <color key="progressTintColor" name="YPBlack"/>
+                            </progressView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="cZY-bc-rdP"/>
                         <color key="backgroundColor" name="YPWhite"/>
                         <constraints>
                             <constraint firstItem="SSZ-qh-rNO" firstAttribute="top" secondItem="cZY-bc-rdP" secondAttribute="top" id="AAM-OL-AdS"/>
+                            <constraint firstItem="zV6-Gd-7GK" firstAttribute="leading" secondItem="cZY-bc-rdP" secondAttribute="leading" id="KC1-a3-yey"/>
                             <constraint firstItem="SSZ-qh-rNO" firstAttribute="leading" secondItem="cZY-bc-rdP" secondAttribute="leading" id="Sns-Em-IBY"/>
+                            <constraint firstItem="cZY-bc-rdP" firstAttribute="trailing" secondItem="zV6-Gd-7GK" secondAttribute="trailing" id="hIX-Eb-ZIH"/>
+                            <constraint firstItem="zV6-Gd-7GK" firstAttribute="top" secondItem="cZY-bc-rdP" secondAttribute="top" id="jEG-Fa-cAB"/>
                             <constraint firstItem="MmT-Gw-Xwf" firstAttribute="top" secondItem="SSZ-qh-rNO" secondAttribute="bottom" id="o5L-h1-d1E"/>
                             <constraint firstAttribute="trailing" secondItem="MmT-Gw-Xwf" secondAttribute="trailing" id="osf-a0-5kI"/>
                             <constraint firstAttribute="bottom" secondItem="MmT-Gw-Xwf" secondAttribute="bottom" id="uUV-lh-yck"/>
@@ -342,6 +350,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="o7l-7m-ZgZ"/>
                     <connections>
+                        <outlet property="progressView" destination="zV6-Gd-7GK" id="6PW-PO-5zg"/>
                         <outlet property="webView" destination="MmT-Gw-Xwf" id="DR1-kc-fjI"/>
                     </connections>
                 </viewController>
