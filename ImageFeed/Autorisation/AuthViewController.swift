@@ -5,12 +5,14 @@ final class AuthViewController: UIViewController {
     // MARK: - Private Properties
     
     private let showWebViewSegueIdentifier = "ShowWebView"
+    private let oauth2Service = OAuth2Service.shared
     
     // MARK: - View Life Cycles
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == showWebViewSegueIdentifier {
             guard
