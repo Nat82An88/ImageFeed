@@ -6,6 +6,7 @@ final class AuthViewController: UIViewController {
     
     private let showWebViewSegueIdentifier = "ShowWebView"
     private let oauth2Service = OAuth2Service.shared
+    private let networkClient = NetworkClient()
     
     // MARK: - View Life Cycles
     
@@ -32,7 +33,15 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        //TODO: process code
+        networkClient.fetchOAuthToken(code: code){ result in
+            switch result {
+            case .success(let tokenResponse):
+                print("Получен токен:\(tokenResponse.accessToken)")
+            case .failure(let error):
+                print("Ошибка получения токена: \(error.localizedDescription)")
+            }
+            
+        }
     }
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
