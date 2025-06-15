@@ -35,8 +35,8 @@ extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         networkClient.fetchOAuthToken(code: code){ result in
             switch result {
-            case .success(let tokenResponse):
-                print("Получен токен:\(tokenResponse.accessToken)")
+            case .success(let accessToken):
+                print("Получен токен:\(accessToken)")
             case .failure(let error):
                 print("Ошибка получения токена: \(error.localizedDescription)")
             }
