@@ -1,10 +1,14 @@
 import UIKit
 
 final class SplashViewController: UIViewController {
+    
+    // MARK: - Private Properties
+    
     private let ShowAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
     
     private let oauth2Service = OAuth2Service.shared
     private let oauth2TokenStorage = OAuth2TokenStorage()
+    // MARK: - View Lifecycle
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -20,10 +24,12 @@ final class SplashViewController: UIViewController {
         super.viewWillAppear(animated)
         setNeedsStatusBarAppearanceUpdate()
     }
+    // MARK: - Status Bar
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
     }
+    // MARK: - Navigation
     
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration")}
@@ -32,7 +38,7 @@ final class SplashViewController: UIViewController {
         window.rootViewController = tabBarController
     }
 }
-// MARK: - Segue Preperation
+// MARK: - Segue Preparation
 
 extension SplashViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -59,15 +65,16 @@ extension SplashViewController: AuthViewControllerDelegate {
     }
     
     private func fetchOAuthToken(_ code: String) {
-        oauth2Service.fetchOAuthToken(code: code) { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success:
-                self.switchToTabBarController()
-            case .failure:
-                // TODO [Sprint 11]
-                break
+           oauth2Service.fetchOAuthToken(code: code) { [weak self] result in
+               guard let self else { return }
+               switch result {
+               case .success:
+                   self.switchToTabBarController()
+               case .failure:
+                   // TODO [Sprint 11]
+                   break
             }
         }
     }
 }
+

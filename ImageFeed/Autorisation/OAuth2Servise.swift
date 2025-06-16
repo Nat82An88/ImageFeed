@@ -2,8 +2,11 @@ import UIKit
 
 final class OAuth2Service {
     
+    // MARK: - Singelton
+    
     static let shared = OAuth2Service()
     private init() {}
+    // MARK: - Request Creation
     
     func makeOAuthTokenRequest(code: String) -> URLRequest {
         guard let baseURL = URL(string: "https://unsplash.com") else {
@@ -25,6 +28,7 @@ final class OAuth2Service {
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         return request
     }
+    // MARK: - Token Fetching
     
     func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         let request = makeOAuthTokenRequest(code: code)

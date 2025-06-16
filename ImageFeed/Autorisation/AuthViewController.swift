@@ -3,6 +3,7 @@ import UIKit
 protocol AuthViewControllerDelegate: AnyObject {
     func authViewController(_vc: AuthViewController, didAuthenticateWithToken token: String)
 }
+
 final class AuthViewController: UIViewController {
     
     weak var delegate: AuthViewControllerDelegate?
@@ -10,7 +11,6 @@ final class AuthViewController: UIViewController {
     
     private let showWebViewSegueIdentifier = "ShowWebView"
     private let oauth2Service = OAuth2Service.shared
-    
     // MARK: - View Life Cycles
     
     override func viewDidLoad() {
@@ -45,7 +45,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
             }
         }
     }
-
+    
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         vc.dismiss(animated: true)
     }
