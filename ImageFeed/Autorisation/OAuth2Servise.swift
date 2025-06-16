@@ -25,4 +25,43 @@ final class OAuth2Service {
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         return request
     }
+    
+    func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
+        let request = makeOAuthTokenRequest(code: code)
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            if let error {
+                print("Сетевая ошибка: \(error.localizedDescription)")
+                completion(.failure(error))
+                return
+            }
+            guard let response = response as? HTTPURLResponse else {
+                print("Ошибка: Не удалось получить HTTP ответ")
+                completion(.failure(NetworkError.httpStatusCode(500)))
+                return
+            }
+            guard response.statusCode >= 200 && response.statusCode < 300 else {
+                print("Ошибка сервера: \(response.statusCode)")
+                completion(.failure(NetworkError.httpStatusCode(response.statusCode)))
+                return
+            }
+            guard let data else {
+                print( "Ошибка: Нет данных в ответе")
+                completion(.failure(NetworkError.httpStatusCode(500)))
+                return
+            }
+            do {
+                let decoder = JSONDecoder()
+                let response = try decoder.decode(OAuthTokenResponseBody.self, from: data)
+                guard let accessToken = response.accessToken else {
+                    completion(.failure(NetworkError.noToken))
+                    return
+                }
+                completion(.success(accessToken))
+            } catch {
+                print( "Ошибка декодирования JSON: \(error.localizedDescription)")
+                completion(.failure(NetworkError.decodingError(error)))
+            }
+        }
+        task.resume()
+    }
 }

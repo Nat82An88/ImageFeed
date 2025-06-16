@@ -1,12 +1,15 @@
 import UIKit
 
+protocol AuthViewControllerDelegate: AnyObject {
+    func authViewController(_vc: AuthViewController, didAuthenticateWithToken token: String)
+}
 final class AuthViewController: UIViewController {
     
+    weak var delegate: AuthViewControllerDelegate?
     // MARK: - Private Properties
     
     private let showWebViewSegueIdentifier = "ShowWebView"
     private let oauth2Service = OAuth2Service.shared
-    private let networkClient = NetworkClient()
     
     // MARK: - View Life Cycles
     
@@ -28,22 +31,21 @@ final class AuthViewController: UIViewController {
         }
     }
 }
-
 // MARK: - WebViewViewControllerDelegate
 
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        networkClient.fetchOAuthToken(code: code){ result in
+        vc.dismiss(animated: true)
+        OAuth2Service.shared.fetchOAuthToken(code: code){ [weak self] result in
+            guard let self else { return }
             switch result {
-            case .success(let accessToken):
-                print("Получен токен:\(accessToken)")
+            case .success(let accessToken): self.delegate?.authViewController(_vc: self, didAuthenticateWithToken: accessToken)
             case .failure(let error):
                 print("Ошибка получения токена: \(error.localizedDescription)")
             }
-            
         }
     }
-    
+
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         vc.dismiss(animated: true)
     }
