@@ -5,7 +5,6 @@ final class SingleImageViewController: UIViewController {
     // MARK: - Public Properties
     
     var image: UIImage?
-    
     // MARK: - IB Outlets
     
     @IBOutlet private var imageView: UIImageView!
@@ -23,7 +22,6 @@ final class SingleImageViewController: UIViewController {
         share.overrideUserInterfaceStyle = .dark
         present(share, animated: true, completion: nil)
     }
-    
     // MARK: - View Life Cycles
     
     override func viewDidLoad() {
@@ -39,7 +37,6 @@ final class SingleImageViewController: UIViewController {
         imageView.contentMode = .center
         rescaleAndCenterImageInScrollView(image: image)
     }
-    
     // MARK: - Private Methods
     
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
@@ -57,7 +54,6 @@ final class SingleImageViewController: UIViewController {
         imageView.center = CGPoint(x: scrollView.bounds.midX + xOffset, y: scrollView.bounds.midY + yOffset)
     }
 }
-
 // MARK: - UIScrollViewDelegate
 
 extension SingleImageViewController: UIScrollViewDelegate {

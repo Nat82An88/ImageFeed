@@ -3,10 +3,10 @@ import UIKit
 class ImagesListViewController: UIViewController {
     
     // MARK: - IB Outlets
-    
+
     @IBOutlet private var tableView: UITableView!
-    
     // MARK: - Private Properties
+    
     private let showSingleImageSegueIdentifier = "ShowSingleImage"
     private let photosName: [String] = Array(0..<20).map { "\($0)" }
     private lazy var dateFormatter: DateFormatter = {
@@ -15,7 +15,6 @@ class ImagesListViewController: UIViewController {
         formatter.timeStyle = .none
         return formatter
     }()
-    
     // MARK: - View Life Cycles
     
     override func viewDidLoad() {
@@ -40,7 +39,6 @@ class ImagesListViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
         }
     }
-    
     // MARK: - Private Methods
     
     private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
@@ -60,7 +58,6 @@ class ImagesListViewController: UIViewController {
         cell.likeButton.setImage(buttonImage, for: .normal)
     }
 }
-
 // MARK: - UITableViewDataSource
 
 extension ImagesListViewController: UITableViewDataSource {
@@ -75,7 +72,6 @@ extension ImagesListViewController: UITableViewDataSource {
         return imageListCell
     }
 }
-
 // MARK: - UITableViewDelegate
 
 extension ImagesListViewController: UITableViewDelegate {
@@ -93,4 +89,3 @@ extension ImagesListViewController: UITableViewDelegate {
         return cellHeight
     }
 }
-

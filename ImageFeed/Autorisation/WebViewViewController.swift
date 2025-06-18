@@ -37,8 +37,8 @@ final class WebViewViewController: UIViewController {
         
         loadAuthView()
     }
-    
     // MARK: - KVO
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         webView.addObserver(
@@ -86,18 +86,15 @@ final class WebViewViewController: UIViewController {
         let request = URLRequest(url: url)
         webView.load(request)
     }
-    
     // MARK: - Deinitialization
     
     deinit {
         webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
     }
 }
-
 // MARK: - WKNavigationDelegate
 
 extension WebViewViewController: WKNavigationDelegate {
-    
     // MARK: - Public Methods
     
     func webView(
@@ -112,7 +109,6 @@ extension WebViewViewController: WKNavigationDelegate {
             decisionHandler(.allow)
         }
     }
-    
     // MARK: - Private Methods//
     
     private func code(from navigationAction: WKNavigationAction) -> String? {
