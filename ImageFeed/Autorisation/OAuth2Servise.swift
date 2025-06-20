@@ -15,10 +15,6 @@ final class OAuth2Service {
             fatalError("Не удалось создать базовый URL для запроса токена Unsplash")
         }
         var components = URLComponents(url: baseURL.appendingPathComponent("/oauth/token"), resolvingAgainstBaseURL: true)
-        guard components != nil else {
-            print("Ошибка: Не удалось создать URLComponents для запроса токена Unsplash")
-            fatalError("Не удалось создать URLComponents для запроса токена Unsplash")
-        }
         components?.queryItems = [
             URLQueryItem(name: "client_id", value: Constants.accessKey),
             URLQueryItem(name: "client_secret", value: Constants.secretKey),
@@ -50,8 +46,8 @@ final class OAuth2Service {
                     }
                     completion(.success(accessToken))
                 } catch {
-                    print("Ошшибка декодирования:\(error.localizedDescription)")
-                    completion(.failure(NetworkError.urlSessionError))
+                    print("Ошибка декодирования:\(error.localizedDescription)")
+                    completion(.failure(error))
                 }
             case .failure(let error):
                 print("Ошибка сети:\(error.localizedDescription)")
