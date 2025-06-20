@@ -1,7 +1,7 @@
 import UIKit
 
 protocol AuthViewControllerDelegate: AnyObject {
-    func authViewController(_vc: AuthViewController, didAuthenticateWithToken token: String)
+    func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String)
 }
 
 final class AuthViewController: UIViewController {
@@ -35,11 +35,11 @@ final class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        vc.dismiss(animated: true)
+        navigationController?.popToViewController(self, animated: true)
         OAuth2Service.shared.fetchOAuthToken(code: code){ [weak self] result in
             guard let self else { return }
             switch result {
-            case .success(let accessToken): self.delegate?.authViewController(_vc: self, didAuthenticateWithToken: accessToken)
+            case .success(let token): delegate?.authViewController(self, didAuthenticateWithCode: token)
             case .failure(let error):
                 print("Ошибка получения токена: \(error.localizedDescription)")
             }

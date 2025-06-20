@@ -54,12 +54,8 @@ extension SplashViewController {
 // MARK: - AuthViewControllerDelegate
 
 extension SplashViewController: AuthViewControllerDelegate {
-    func authViewController(_vc: AuthViewController, didAuthenticateWithToken token: String) {
-        dismiss(animated: true) { [weak self] in
-            guard let self else { return }
-            self.oauth2TokenStorage.token = token
-            self.switchToTabBarController()
-        }
+    func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
+        dismiss(animated: true)
     }
     
     private func fetchOAuthToken(_ code: String) {
@@ -75,4 +71,3 @@ extension SplashViewController: AuthViewControllerDelegate {
         }
     }
 }
-

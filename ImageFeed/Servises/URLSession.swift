@@ -6,32 +6,43 @@ enum NetworkError: Error {
     case urlSessionError
     case noToken
     case decodingError(Error)
+    case invalidBaseURL
+    case invalidURLComponents
 }
 
 extension URLSession {
     func data(
-        for request: URLRequest,
-        completion: @escaping (Result<Data, Error>) -> Void
+        for request: URLRequest, tokenStorage: OAuth2TokenStorage,
+        completion: @escaping (Result<String?, Error>) -> Void
     ) -> URLSessionTask {
-        let fulfillCompletionOnTheMainThread: (Result<Data, Error>) -> Void = { result in
+        let fulfillCompletionOnTheMainThread: (Result<String?, Error>) -> Void = { result in
             DispatchQueue.main.async {
                 completion(result)
             }
         }
-        
-        let task = dataTask(with: request, completionHandler: { data, response, error in
-            if let data = data, let response = response, let statusCode = (response as? HTTPURLResponse)?.statusCode {
-                if 200 ..< 300 ~= statusCode {
-                    fulfillCompletionOnTheMainThread(.success(data))
-                } else {
-                    fulfillCompletionOnTheMainThread(.failure(NetworkError.httpStatusCode(statusCode)))
-                }
-            } else if let error {
-                fulfillCompletionOnTheMainThread(.failure(NetworkError.urlRequestError(error)))
-            } else {
-                fulfillCompletionOnTheMainThread(.failure(NetworkError.urlSessionError))
+        let task = URLSession.shared.dataTask(with: request) { data, responce, error in
+            if let error {
+                print("Сетевая ошибка:\(error)")
+                fulfillCompletionOnTheMainThread(.failure(error))
+                return
             }
-        })
-        return task
+            guard let data else {
+                let error = NSError(domain: "No data", code: 0, userInfo: nil)
+                fulfillCompletionOnTheMainThread(.failure(error))
+                return
+            }
+                do {
+                    let tokenResponse = try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)
+                    let token = tokenResponse.accessToken
+                    tokenStorage.token = token
+                    fulfillCompletionOnTheMainThread(.success(token))
+                }
+                catch {
+                    print(" Ошибка декодирования токена: \(error)")
+                    fulfillCompletionOnTheMainThread(.failure(error))
+                }
+            }
+            task.resume()
+            return task
+        }
     }
-}

@@ -1,8 +1,9 @@
 import UIKit
 import WebKit
 
-enum WebViewConstants {
+private enum WebViewConstants {
     static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
+    static let progressTreshold: Double = 0.001
 }
 
 protocol WebViewViewControllerDelegate: AnyObject {
@@ -33,8 +34,6 @@ final class WebViewViewController: UIViewController {
         super.viewDidLoad()
         
         webView.navigationDelegate = self
-        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
-        
         loadAuthView()
     }
     // MARK: - KVO
@@ -65,7 +64,7 @@ final class WebViewViewController: UIViewController {
     
     private func updateProgress() {
         progressView.progress = Float(webView.estimatedProgress)
-        progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.001
+        progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= WebViewConstants.progressTreshold
     }
     
     private func loadAuthView() {
@@ -85,11 +84,7 @@ final class WebViewViewController: UIViewController {
         }
         let request = URLRequest(url: url)
         webView.load(request)
-    }
-    // MARK: - Deinitialization
-    
-    deinit {
-        webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
+        updateProgress()
     }
 }
 // MARK: - WKNavigationDelegate
@@ -103,6 +98,7 @@ extension WebViewViewController: WKNavigationDelegate {
         decisionHandler: @escaping (WKNavigationActionPolicy) -> Void
     ) {
         if let code = code(from: navigationAction) {
+            print("Получен код авторизации: \(code)")
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             decisionHandler(.cancel)
         } else {
@@ -112,16 +108,15 @@ extension WebViewViewController: WKNavigationDelegate {
     // MARK: - Private Methods//
     
     private func code(from navigationAction: WKNavigationAction) -> String? {
-        if
+        guard
             let url = navigationAction.request.url,
             let urlComponents = URLComponents(string: url.absoluteString),
             urlComponents.path == "/oauth/authorize/native",
             let items = urlComponents.queryItems,
             let codeItem = items.first(where: { $0.name == "code" })
-        {
-            return codeItem.value
-        } else {
+        else {
             return nil
         }
+        return codeItem.value
     }
 }
