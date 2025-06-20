@@ -44,6 +44,8 @@ final class OAuth2Service {
                     guard let accessToken = tokenResponse.accessToken else {
                         throw NetworkError.missingToken
                     }
+                    let tokenStorage = OAuth2TokenStorage()
+                    tokenStorage.token = accessToken
                     completion(.success(accessToken))
                 } catch {
                     print("Ошибка декодирования:\(error.localizedDescription)")

@@ -20,7 +20,9 @@ final class SplashViewController: UIViewController {
     // MARK: - Navigation
     
     private func switchToTabBarController() {
-        guard let window = UIApplication.shared.windows.first else { return }
+        guard let window = UIApplication.shared.windows.first else {
+           print("Не удалось открыть окно приложения")
+            return }
         let tabBarController = UIStoryboard(name: "Main", bundle: .main)
             .instantiateViewController(withIdentifier: "TabBarViewController")
         window.rootViewController = tabBarController
