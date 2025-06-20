@@ -17,20 +17,10 @@ final class SplashViewController: UIViewController {
             performSegue(withIdentifier: ShowAuthenticationScreenSegueIdentifier, sender: nil)
         }
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setNeedsStatusBarAppearanceUpdate()
-    }
-    // MARK: - Status Bar
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        .lightContent
-    }
     // MARK: - Navigation
     
     private func switchToTabBarController() {
-        guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration")}
+        guard let window = UIApplication.shared.windows.first else { return }
         let tabBarController = UIStoryboard(name: "Main", bundle: .main)
             .instantiateViewController(withIdentifier: "TabBarViewController")
         window.rootViewController = tabBarController
