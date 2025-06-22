@@ -96,6 +96,6 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private func didTapLogoutButton() {
+        // TODO [Sprint 11]
     }
 }
-
