@@ -64,6 +64,11 @@ final class OAuth2Service {
             task = urlSession.dataTask(with: request) {[weak self] data, response, error in
                 DispatchQueue.main.async {
                     guard let self else { return }
+                    if self.lastCode != code {
+                        completion(.failure(AuthServiceError.invalidRequest))
+                        self.resetState()
+                        return
+                    }
                     if let error {
                         print("Ошибка сети:\(error.localizedDescription)")
                         completion(.failure(error))
