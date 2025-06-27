@@ -50,14 +50,29 @@ final class ProfileViewController: UIViewController {
         
         addSubviews()
         setupConstraints()
-        
+        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+            print("Токен не найден")
+            return
+        }
+        ProfileService.shared.fetchProfile(token) { [weak self] (result: Result<Profile, Error>) in
+            switch result {
+            case .success(let profile):
+                DispatchQueue.main.async {
+                    self?.nameLabel.text = profile.name
+                    self?.loginNameLabel.text = "@\(profile.username)"
+                    self?.descriptionLabel.text = profile.bio
+                }
+            case .failure(let error):
+                print("Ошибка загрузки профиля: \(error.localizedDescription)")
+            }
+        }
     }
     
     // MARK: - Private Methods
     
     private func addSubviews() {
         [imageView, nameLabel, loginNameLabel, descriptionLabel, logoutButton].forEach { view in
-           view.translatesAutoresizingMaskIntoConstraints = false
+            view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
     }
