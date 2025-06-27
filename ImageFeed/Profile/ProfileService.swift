@@ -7,7 +7,8 @@ final class ProfileService {
     private let urlSession = URLSession.shared
     private let decoder = JSONDecoder()
     private var activeTasks = Set<URLSessionDataTask>()
-    private var isFetching = false // Флаг для предотвращения гонок
+    private var isFetching = false
+    private(set) var profile: Profile?
     // MARK: - Singleton
     
     static let shared = ProfileService()
@@ -51,6 +52,7 @@ final class ProfileService {
                     do {
                         let profileResult = try self.decoder.decode(ProfileResult.self, from: data)
                         let profile = Profile(from: profileResult)
+                            self.profile = profile
                         completion(.success(profile))
                     } catch {
                         print("Ошибка декодирования JSON: \(error.localizedDescription)")

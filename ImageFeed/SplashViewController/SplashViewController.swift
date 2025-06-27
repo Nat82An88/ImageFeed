@@ -7,16 +7,32 @@ final class SplashViewController: UIViewController {
     private let ShowAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
     private let oauth2Service = OAuth2Service.shared
     private let oauth2TokenStorage = OAuth2TokenStorage()
+    private let profileService = ProfileService.shared
     // MARK: - View Lifecycle
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        if oauth2TokenStorage.token != nil {
-            switchToTabBarController()
-        } else {
-            performSegue(withIdentifier: ShowAuthenticationScreenSegueIdentifier, sender: nil)
-        }
-    }
+        if let token = oauth2TokenStorage.token {
+                   fetchProfile(with: token)
+               } else {
+                   performSegue(withIdentifier: ShowAuthenticationScreenSegueIdentifier, sender: nil)
+               }
+           }
+           // MARK: - Profile Fetching
+           
+           private func fetchProfile(with token: String) {
+               profileService.fetchProfile(token) { [weak self] result in
+                   switch result {
+                   case .success:
+                       DispatchQueue.main.async {
+                           self?.switchToTabBarController()
+                       }
+                   case .failure(let error):
+                       print("Ошибка загрузки профиля: \(error.localizedDescription)")
+                       self?.switchToTabBarController()
+                   }
+               }
+           }
     // MARK: - Navigation
     
     private func switchToTabBarController() {
@@ -48,6 +64,7 @@ extension SplashViewController {
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
         dismiss(animated: true)
+        fetchOAuthToken(code)
     }
     
     private func fetchOAuthToken(_ code: String) {

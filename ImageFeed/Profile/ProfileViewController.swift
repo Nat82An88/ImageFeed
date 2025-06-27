@@ -3,7 +3,7 @@ import UIKit
 final class ProfileViewController: UIViewController {
     
     // MARK: - Private Properties
-    
+    private let tokenStorage = OAuth2TokenStorage()
     private lazy var imageView: UIImageView = {
         let avatarImage = UIImage(named: "Avatar")
         let imageView = UIImageView(image: avatarImage)
@@ -13,21 +13,21 @@ final class ProfileViewController: UIViewController {
     }()
     private lazy var nameLabel: UILabel = {
         let nameLabel = UILabel()
-        nameLabel.text = "Andrei Vasenkov"
+        nameLabel.text = ""
         nameLabel.font = .systemFont(ofSize: 23, weight: .bold)
         nameLabel.textColor = .ypWhite
         return nameLabel
     }()
     private lazy var loginNameLabel: UILabel = {
         loginNameLabel = UILabel()
-        loginNameLabel.text = "@NatAn"
+        loginNameLabel.text = ""
         loginNameLabel.font = .systemFont(ofSize: 13, weight: .regular)
         loginNameLabel.textColor = .ypGray
         return loginNameLabel
     }()
     private lazy var descriptionLabel: UILabel = {
         let descriptionLabel = UILabel()
-        descriptionLabel.text = "Hello, world!"
+        descriptionLabel.text = ""
         descriptionLabel.font = .systemFont(ofSize: 13, weight: .regular)
         descriptionLabel.textColor = .ypWhite
         descriptionLabel.numberOfLines = 0
@@ -42,7 +42,6 @@ final class ProfileViewController: UIViewController {
         logoutButton.tintColor = .ypRed
         return logoutButton
     }()
-    
     // MARK: - View Life Cycles
     
     override func viewDidLoad() {
@@ -50,17 +49,20 @@ final class ProfileViewController: UIViewController {
         
         addSubviews()
         setupConstraints()
-        guard let token = UserDefaults.standard.string(forKey: "accessToken") else {
+        fetchProfileData()
+    }
+    // MARK: - Private Methods
+    
+    private func fetchProfileData() {
+        guard let accessToken = tokenStorage.token else {
             print("Токен не найден")
             return
         }
-        ProfileService.shared.fetchProfile(token) { [weak self] (result: Result<Profile, Error>) in
+        ProfileService.shared.fetchProfile(accessToken) { [weak self] result in
             switch result {
             case .success(let profile):
                 DispatchQueue.main.async {
-                    self?.nameLabel.text = profile.name
-                    self?.loginNameLabel.text = "@\(profile.username)"
-                    self?.descriptionLabel.text = profile.bio
+                    self?.updateProfileDetails(profile: profile)
                 }
             case .failure(let error):
                 print("Ошибка загрузки профиля: \(error.localizedDescription)")
@@ -68,7 +70,11 @@ final class ProfileViewController: UIViewController {
         }
     }
     
-    // MARK: - Private Methods
+    private func updateProfileDetails(profile: Profile) {
+        nameLabel.text = profile.name
+        loginNameLabel.text = "@\(profile.username)"
+        descriptionLabel.text = profile.bio
+    }
     
     private func addSubviews() {
         [imageView, nameLabel, loginNameLabel, descriptionLabel, logoutButton].forEach { view in
