@@ -23,7 +23,8 @@ final class SplashViewController: UIViewController {
            private func fetchProfile(with token: String) {
                profileService.fetchProfile(token) { [weak self] result in
                    switch result {
-                   case .success:
+                   case .success(let profile):
+                       ProfileImageService.shared.fetchProfileImageURL(username: profile.username) {_ in}
                        DispatchQueue.main.async {
                            self?.switchToTabBarController()
                        }
