@@ -16,7 +16,7 @@ final class ProfileService {
     // MARK: - Request Creation
     
     private func makeProfileRequest(accessToken: String) throws -> URLRequest {
-        guard let baseURL = URL(string: "https://api.unsplash.com/users/me") else {
+        guard let baseURL = URL(string: "https://api.unsplash.com/me") else {
             throw NetworkError.invalidURL
         }
         var request = URLRequest(url: baseURL)
