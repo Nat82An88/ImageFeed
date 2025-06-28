@@ -5,8 +5,7 @@ final class ProfileImageService {
     // MARK: - Private Properties
     
     private let urlSession = URLSession.shared
-    private let decoder = JSONDecoder()
-    private var activeTasks = Set<URLSessionDataTask>()
+    private var activeTasks = Set<URLSessionTask>()
     private var isFetching = false
     private(set) var avatarURL: String?
     private let tokenStorage = OAuth2TokenStorage()
@@ -41,43 +40,28 @@ final class ProfileImageService {
         isFetching = true
         do {
             let request = try makeProfileImageRequest(username: username)
-            let task = urlSession.dataTask(with: request) { [weak self] data, response, error in
+            let task = urlSession.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
                 DispatchQueue.main.async {
                     guard let self else { return }
                     self.isFetching = false
-                    if let error {
-                        print("Сетевая ошибка: \(error.localizedDescription)")
-                        completion(.failure(error))
-                        return
-                    }
-                    guard let data else {
-                        print("Ошибка: полученные данные пусты")
-                        completion(.failure(NetworkError.noData))
-                        return
-                    }
-                    do {
-                        let userResult = try self.decoder.decode(UserResult.self, from: data)
+                    switch result {
+                    case .success(let userResult):
                         let smallURL = userResult.profileImage.small
                         self.avatarURL = smallURL
                         completion(.success(smallURL))
-                        NotificationCenter.default
-                            .post(
-                                name: ProfileImageService.didChangeNotification,
-                                object: self,
-                                userInfo: ["URL": smallURL]
-                            )
-                    } catch {
-                        print("Ошибка декодирования JSON: \(error.localizedDescription)")
+                        NotificationCenter.default.post(
+                            name: ProfileImageService.didChangeNotification,
+                            object: self,
+                            userInfo: ["URL": smallURL]
+                        )
+                    case .failure(let error):
+                        print("Ошибка: \(error.localizedDescription)")
                         completion(.failure(error))
                     }
                 }
             }
+            activeTasks.insert(task)
             task.resume()
-            self.activeTasks.insert(task)
-            let workItem = DispatchWorkItem { [weak self] in
-                self?.activeTasks.remove(task)
-            }
-            workItem.perform()
         } catch {
             print("Ошибка создания запроса: \(error.localizedDescription)")
             completion(.failure(error))

@@ -9,14 +9,13 @@ final class OAuth2Service {
     // MARK: - Private Properties
     
     private let urlSession = URLSession.shared
-    private var task: URLSessionDataTask?
+    private var task: URLSessionTask?
     private var lastCode: String?
     
     // MARK: - Singleton
     
     static let shared = OAuth2Service()
     private init() {}
-    private let decoder = JSONDecoder()
     // MARK: - Request Creation
     
     func makeOAuthTokenRequest(code: String)throws -> URLRequest {
@@ -61,7 +60,7 @@ final class OAuth2Service {
         lastCode = code
         do{
             let request = try makeOAuthTokenRequest(code: code)
-            task = urlSession.dataTask(with: request) {[weak self] data, response, error in
+            task = urlSession.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
                 DispatchQueue.main.async {
                     guard let self else { return }
                     if self.lastCode != code {
@@ -69,32 +68,24 @@ final class OAuth2Service {
                         self.resetState()
                         return
                     }
-                    if let error {
-                        print("Ошибка сети:\(error.localizedDescription)")
-                        completion(.failure(error))
-                        self.resetState()
-                        return
-                    }
-                    guard let data else {
-                        completion(.failure(NetworkError.noData))
-                        self.resetState()
-                        return
-                    }
-                    do {
-                        let tokenResponse = try self.decoder.decode(OAuthTokenResponseBody.self, from: data)
+                    switch result {
+                    case .success(let tokenResponse):
                         guard let accessToken = tokenResponse.accessToken else {
-                            throw NetworkError.missingToken
+                            completion(.failure(NetworkError.missingToken))
+                            self.resetState()
+                            return
                         }
                         let tokenStorage = OAuth2TokenStorage()
                         tokenStorage.token = accessToken
                         completion(.success(accessToken))
-                    } catch {
-                        print("Ошибка декодирования:\(error.localizedDescription)")
+                    case .failure(let error):
+                        print("Ошибка: \(error.localizedDescription)")
                         completion(.failure(error))
                         self.resetState()
                     }
                 }
             }
+            
             task?.resume()
         } catch {
             completion(.failure(error))

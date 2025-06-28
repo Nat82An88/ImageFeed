@@ -5,8 +5,7 @@ final class ProfileService {
     // MARK: - Private Properties
     
     private let urlSession = URLSession.shared
-    private let decoder = JSONDecoder()
-    private var activeTasks = Set<URLSessionDataTask>()
+    private var activeTasks = Set<URLSessionTask>()
     private var isFetching = false
     private(set) var profile: Profile?
     // MARK: - Singleton
@@ -35,26 +34,16 @@ final class ProfileService {
         isFetching = true
         do {
             let request = try makeProfileRequest(accessToken: token)
-            let task = urlSession.dataTask(with: request) { [weak self] data, response, error in
+            let task = urlSession.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
                 DispatchQueue.main.async {
                     guard let self else { return }
                     self.isFetching = false
-                    if let error = error {
-                        print("Сетевая ошибка: \(error.localizedDescription)")
-                        completion(.failure(error))
-                        return
-                    }
-                    guard let data else {
-                        print("Ошибка: полученные данные пусты")
-                        completion(.failure(NetworkError.noData))
-                        return
-                    }
-                    do {
-                        let profileResult = try self.decoder.decode(ProfileResult.self, from: data)
+                    switch result {
+                    case .success(let profileResult):
                         let profile = Profile(from: profileResult)
-                            self.profile = profile
+                        self.profile = profile
                         completion(.success(profile))
-                    } catch {
+                    case .failure(let error):
                         print("Ошибка декодирования JSON: \(error.localizedDescription)")
                         completion(.failure(error))
                     }
