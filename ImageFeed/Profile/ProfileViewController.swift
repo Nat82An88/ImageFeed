@@ -3,7 +3,9 @@ import UIKit
 final class ProfileViewController: UIViewController {
     
     // MARK: - Private Properties
+    
     private let tokenStorage = OAuth2TokenStorage()
+    private var profileImageServiceObserver: NSObjectProtocol?
     private lazy var imageView: UIImageView = {
         let avatarImage = UIImage(named: "Avatar")
         let imageView = UIImageView(image: avatarImage)
@@ -47,11 +49,26 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        profileImageServiceObserver = NotificationCenter.default.addObserver(
+            forName: ProfileImageService.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            self.updateAvatar()
+        }
+        updateAvatar()
         addSubviews()
         setupConstraints()
         fetchProfileData()
     }
     // MARK: - Private Methods
+    
+    private func updateAvatar() {
+        guard let profileImageURL = ProfileImageService.shared.avatarURL,
+              let url = URL(string: profileImageURL) else { return }
+        // TODO [Sprint 11] Обновить фватар используя Kingfisher
+    }
     
     private func fetchProfileData() {
         guard let accessToken = tokenStorage.token else {

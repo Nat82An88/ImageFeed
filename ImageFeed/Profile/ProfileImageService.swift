@@ -10,6 +10,8 @@ final class ProfileImageService {
     private var isFetching = false
     private(set) var avatarURL: String?
     private let tokenStorage = OAuth2TokenStorage()
+    
+    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     // MARK: - Singleton
     
     static let shared = ProfileImageService()
@@ -26,7 +28,6 @@ final class ProfileImageService {
             throw NetworkError.noToken
         }
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        
         return request
     }
     // MARK: - Profile Image Fetching
@@ -59,6 +60,12 @@ final class ProfileImageService {
                         let smallURL = userResult.profileImage.small
                         self.avatarURL = smallURL
                         completion(.success(smallURL))
+                        NotificationCenter.default
+                            .post(
+                                name: ProfileImageService.didChangeNotification,
+                                object: self,
+                                userInfo: ["URL": smallURL]
+                            )
                     } catch {
                         print("Ошибка декодирования JSON: \(error.localizedDescription)")
                         completion(.failure(error))
