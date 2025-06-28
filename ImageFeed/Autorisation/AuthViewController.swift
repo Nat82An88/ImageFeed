@@ -31,6 +31,22 @@ final class AuthViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
         }
     }
+    // MARK: - Private Methods
+    
+    private func showErrorAlert() {
+        let alert = UIAlertController(
+            title: "Что-то пошло не так(",
+            message: "Не удалось войти в систему",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(
+            title: "OK",
+            style: .default,
+            handler: nil
+        )
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
+    }
 }
 // MARK: - WebViewViewControllerDelegate
 
@@ -46,6 +62,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
                 print("Токен получен успешно: \(token)")
             case .failure(let error):
                 print("Ошибка получения токена: \(error.localizedDescription)")
+                self.showErrorAlert()
             }
         }
     }
