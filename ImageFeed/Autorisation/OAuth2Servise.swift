@@ -48,11 +48,13 @@ final class OAuth2Service {
             if lastCode != code {
                 task?.cancel()
             } else {
+                print("Ошибка: Повторный запрос с тем же кодом авторизации")
                 completion(.failure(AuthServiceError.invalidRequest))
                 return
             }
         } else {
             if lastCode == code {
+                print("Ошибка: Повторный запрос с тем же кодом авторизации")
                 completion(.failure(AuthServiceError.invalidRequest))
                 return
             }
@@ -64,6 +66,7 @@ final class OAuth2Service {
                 DispatchQueue.main.async {
                     guard let self else { return }
                     if self.lastCode != code {
+                        print("Ошибка: Код авторизации устарел")
                         completion(.failure(AuthServiceError.invalidRequest))
                         self.resetState()
                         return
@@ -71,6 +74,7 @@ final class OAuth2Service {
                     switch result {
                     case .success(let tokenResponse):
                         guard let accessToken = tokenResponse.accessToken else {
+                            print("Ошибка: Токен не получен в ответе")
                             completion(.failure(NetworkError.missingToken))
                             self.resetState()
                             return
@@ -79,15 +83,15 @@ final class OAuth2Service {
                         tokenStorage.token = accessToken
                         completion(.success(accessToken))
                     case .failure(let error):
-                        print("Ошибка: \(error.localizedDescription)")
+                        print("Ошибка при получении токена: \(error.localizedDescription)")
                         completion(.failure(error))
                         self.resetState()
                     }
                 }
             }
-            
             task?.resume()
         } catch {
+            print("Ошибка при создании запроса: \(error.localizedDescription)")
             completion(.failure(error))
         }
     }
