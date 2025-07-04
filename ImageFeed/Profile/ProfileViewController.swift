@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
@@ -7,9 +8,7 @@ final class ProfileViewController: UIViewController {
     private let tokenStorage = OAuth2TokenStorage()
     private var profileImageServiceObserver: NSObjectProtocol?
     private lazy var imageView: UIImageView = {
-        let avatarImage = UIImage(named: "Avatar")
-        let imageView = UIImageView(image: avatarImage)
-        imageView.tintColor = .ypGray
+        let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
@@ -55,6 +54,7 @@ final class ProfileViewController: UIViewController {
             queue: .main
         ) { [weak self] _ in
             guard let self else { return }
+            print("Получено уведомление об изменении аватарки")
             self.updateAvatar()
         }
         updateAvatar()
@@ -66,8 +66,18 @@ final class ProfileViewController: UIViewController {
     
     private func updateAvatar() {
         guard let profileImageURL = ProfileImageService.shared.avatarURL,
-              let url = URL(string: profileImageURL) else { return }
-        // TODO [Sprint 11] Обновить фватар используя Kingfisher
+              let url = URL(string: profileImageURL) else {
+            print("Аватарка не найдена")
+            imageView.image = UIImage(named: "Avatar")
+            return }
+        imageView.kf.setImage(
+            with: url,
+            placeholder: UIImage(named: "placeholder.jpeg"),
+            options: [
+                .scaleFactor(UIScreen.main.scale),
+                .transition(.fade(0.3))
+            ]
+        )
     }
     
     private func fetchProfileData() {
@@ -80,7 +90,23 @@ final class ProfileViewController: UIViewController {
             case .success(let profile):
                 DispatchQueue.main.async {
                     self?.updateProfileDetails(profile: profile)
+                    ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { [weak self] result in
+                        switch result {
+                        case .success(let url):
+                            print("Получен URL аватарки: \(url)")
+                            guard let self else { return }
+                            if let imageURL = URL(string: url) {
+                                self.imageView.kf.setImage(with: imageURL)
+                            } else {
+                                print("Неверный формат URL")
+                                return
+                            }
+                        case .failure(let error):
+                            print("Ошибка получения URL аватарки: \(error.localizedDescription)")
+                        }
+                    }
                 }
+                
             case .failure(let error):
                 print("Ошибка загрузки профиля: \(error.localizedDescription)")
             }
