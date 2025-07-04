@@ -56,6 +56,7 @@ final class ProfileImageService {
                         return
                     }
                     do {
+                        self.decoder.keyDecodingStrategy = .convertFromSnakeCase
                         let userResult = try self.decoder.decode(UserResult.self, from: data)
                         let smallURL = userResult.profileImage.small
                         self.avatarURL = smallURL
