@@ -90,7 +90,7 @@ extension SplashViewController: AuthViewControllerDelegate {
             case .success:
                 self.switchToTabBarController()
             case .failure:
-                // TODO [Sprint 11]
+                self.showAuthViewController()
                 break
             }
         }
