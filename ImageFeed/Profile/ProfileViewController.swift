@@ -161,6 +161,8 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private func didTapLogoutButton() {
-        // TODO [Sprint 11]
+        tokenStorage.token = nil
+        let authViewController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "AuthViewController") as! AuthViewController
+        present(authViewController, animated: true, completion: nil)
     }
 }
