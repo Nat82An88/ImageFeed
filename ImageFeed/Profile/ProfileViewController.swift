@@ -35,8 +35,12 @@ final class ProfileViewController: UIViewController {
         return descriptionLabel
     }()
     private lazy var logoutButton: UIButton = {
+        guard let image = UIImage(named: "Exit") else {
+            print("Ошибка: не удалось загрузить изображение 'Exit'")
+            return UIButton()
+        }
         let logoutButton = UIButton.systemButton(
-            with: UIImage(named: "Exit")!,
+            with: image,
             target: self,
             action: #selector(Self.didTapLogoutButton)
         )
@@ -162,7 +166,11 @@ final class ProfileViewController: UIViewController {
     @objc
     private func didTapLogoutButton() {
         tokenStorage.token = nil
-        let authViewController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "AuthViewController") as! AuthViewController
+        guard let authViewController = UIStoryboard(name: "Main", bundle: .main)
+            .instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
+            print("Ошибка: не удалось создать AuthViewController")
+            return
+        }
         present(authViewController, animated: true, completion: nil)
     }
 }
