@@ -1,63 +1,132 @@
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
     // MARK: - Private Properties
     
+    private let tokenStorage = OAuth2TokenStorage()
+    private var profileImageServiceObserver: NSObjectProtocol?
     private lazy var imageView: UIImageView = {
-        let avatarImage = UIImage(named: "Avatar")
-        let imageView = UIImageView(image: avatarImage)
-        imageView.tintColor = .ypGray
+        let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     private lazy var nameLabel: UILabel = {
         let nameLabel = UILabel()
-        nameLabel.text = "Andrei Vasenkov"
+        nameLabel.text = ""
         nameLabel.font = .systemFont(ofSize: 23, weight: .bold)
         nameLabel.textColor = .ypWhite
         return nameLabel
     }()
     private lazy var loginNameLabel: UILabel = {
         loginNameLabel = UILabel()
-        loginNameLabel.text = "@NatAn"
+        loginNameLabel.text = ""
         loginNameLabel.font = .systemFont(ofSize: 13, weight: .regular)
         loginNameLabel.textColor = .ypGray
         return loginNameLabel
     }()
     private lazy var descriptionLabel: UILabel = {
         let descriptionLabel = UILabel()
-        descriptionLabel.text = "Hello, world!"
+        descriptionLabel.text = ""
         descriptionLabel.font = .systemFont(ofSize: 13, weight: .regular)
         descriptionLabel.textColor = .ypWhite
         descriptionLabel.numberOfLines = 0
         return descriptionLabel
     }()
     private lazy var logoutButton: UIButton = {
+        guard let image = UIImage(named: "Exit") else {
+            print("Ошибка: не удалось загрузить изображение 'Exit'")
+            return UIButton()
+        }
         let logoutButton = UIButton.systemButton(
-            with: UIImage(named: "Exit")!,
+            with: image,
             target: self,
             action: #selector(Self.didTapLogoutButton)
         )
         logoutButton.tintColor = .ypRed
         return logoutButton
     }()
-    
     // MARK: - View Life Cycles
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .ypBlack
+        profileImageServiceObserver = NotificationCenter.default.addObserver(
+            forName: ProfileImageService.didChangeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            guard let self else { return }
+            print("Получено уведомление об изменении аватарки")
+            self.updateAvatar()
+        }
+        updateAvatar()
         addSubviews()
         setupConstraints()
-        
+        fetchProfileData()
+    }
+    // MARK: - Private Methods
+    
+    private func updateAvatar() {
+        guard let profileImageURL = ProfileImageService.shared.avatarURL,
+              let url = URL(string: profileImageURL) else {
+            print("Аватарка не найдена")
+            imageView.image = UIImage(named: "Avatar")
+            return }
+        imageView.kf.setImage(
+            with: url,
+            placeholder: UIImage(named: "placeholder.jpeg"),
+            options: [
+                .scaleFactor(UIScreen.main.scale),
+                .transition(.fade(0.3))
+            ]
+        )
     }
     
-    // MARK: - Private Methods
+    private func fetchProfileData() {
+        guard let accessToken = tokenStorage.token else {
+            print("Токен не найден")
+            return
+        }
+        ProfileService.shared.fetchProfile(accessToken) { [weak self] result in
+            switch result {
+            case .success(let profile):
+                DispatchQueue.main.async {
+                    self?.updateProfileDetails(profile: profile)
+                    ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { [weak self] result in
+                        switch result {
+                        case .success(let url):
+                            print("Получен URL аватарки: \(url)")
+                            guard let self else { return }
+                            if let imageURL = URL(string: url) {
+                                self.imageView.kf.setImage(with: imageURL)
+                            } else {
+                                print("Неверный формат URL")
+                                return
+                            }
+                        case .failure(let error):
+                            print("Ошибка получения URL аватарки: \(error.localizedDescription)")
+                        }
+                    }
+                }
+                
+            case .failure(let error):
+                print("Ошибка загрузки профиля: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func updateProfileDetails(profile: Profile) {
+        nameLabel.text = profile.name
+        loginNameLabel.text = "@\(profile.username)"
+        descriptionLabel.text = profile.bio
+    }
     
     private func addSubviews() {
         [imageView, nameLabel, loginNameLabel, descriptionLabel, logoutButton].forEach { view in
-           view.translatesAutoresizingMaskIntoConstraints = false
+            view.translatesAutoresizingMaskIntoConstraints = false
             self.view.addSubview(view)
         }
     }
@@ -96,6 +165,12 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private func didTapLogoutButton() {
-        // TODO [Sprint 11]
+        tokenStorage.token = nil
+        guard let authViewController = UIStoryboard(name: "Main", bundle: .main)
+            .instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
+            print("Ошибка: не удалось создать AuthViewController")
+            return
+        }
+        present(authViewController, animated: true, completion: nil)
     }
 }
