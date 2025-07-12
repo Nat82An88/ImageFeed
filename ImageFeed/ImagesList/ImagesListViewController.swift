@@ -25,10 +25,21 @@ class ImagesListViewController: UIViewController {
         
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
         loadNextPage()
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handlePhotosUpdate),
+            name: ImagesListService.didChangeNotification,
+            object: nil
+        )
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self)
+    }
+    
+    @objc private func handlePhotosUpdate(_ notification: Notification) {
+        updateTableViewAnimated()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -53,6 +64,7 @@ class ImagesListViewController: UIViewController {
         guard indexPath.row < imagesListService.photos.count else { return }
         
         let photo = imagesListService.photos[indexPath.row]
+        cell.cellImage.kf.indicatorType = .activity
         if let url = URL(string: photo.thumbImageURL) {
             cell.cellImage.kf.setImage(with: url)
         } else {
@@ -66,6 +78,19 @@ class ImagesListViewController: UIViewController {
         ? UIImage(named: "Active")
         : UIImage(named: "notActive")
         cell.likeButton.setImage(buttonImage, for: .normal)
+    }
+    
+    private func reloadCell(for indexPath: IndexPath) {
+        guard indexPath.row < imagesListService.photos.count else { return }
+        
+        tableView.beginUpdates()
+        tableView.reloadRows(at: [indexPath], with: .fade)
+        tableView.endUpdates()
+        tableView.performBatchUpdates({
+            tableView.reloadRows(at: [indexPath], with: .fade)
+        }) { _ in
+            self.tableView.layoutIfNeeded()
+        }
     }
     
     private func loadNextPage() {

@@ -55,3 +55,14 @@ final class ImagesListService {
         task.resume()
     }
 }
+extension ImagesListService {
+    static let photoUpdatedNotification = Notification.Name("PhotoUpdated")
+    
+    func updatePhoto(_ photo: Photo, at index: Int) {
+        photos[index] = photo
+        NotificationCenter.default.post(
+            name: ImagesListService.photoUpdatedNotification,
+            object: index
+        )
+    }
+}
