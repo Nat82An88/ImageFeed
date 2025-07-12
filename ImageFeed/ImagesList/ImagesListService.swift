@@ -3,20 +3,25 @@ import UIKit
 final class ImagesListService {
     
     // MARK: - Private Properties
+    
     static let didChangeNotification = Notification.Name("ImagesListServiceDidChange")
     
     private(set) var photos: [Photo] = []
-    private var lastLoadedPage: Int = 1
+    private var lastLoadedPage = 1
     private var isLoading = false
     private let session = URLSession.shared
     private let perPage = 10
+    // MARK: - Private Methods
     
     func fetchPhotosNextPage() {
         guard !isLoading else { return }
         isLoading = true
-        let url = URL(string: "https://api.unsplash.com/photos?page=\(lastLoadedPage)&per_page=\(perPage)")!
         
-        let task = session.dataTask(with: url) { [weak self] data, response, error in
+        guard let url = URL(string: "https://api.unsplash.com/photos?page=\(lastLoadedPage)&per_page=\(perPage)") else {
+            print("Неверный URL")
+            return
+        }
+        let task = session.dataTask(with: url) { [weak self] data, _, error in
             guard let self else { return }
             defer { self.isLoading = false }
             guard let data, error == nil else {
@@ -32,7 +37,7 @@ final class ImagesListService {
                         id: result.id,
                         size: CGSize(width: CGFloat(result.width), height: CGFloat(result.height)),
                         createdAt: result.createdAt,
-                        welcomeDescription: result.description,
+                        welcomeDescription: result.description ?? "",
                         thumbImageURL: result.urls.thumb,
                         largeImageURL: result.urls.regular,
                         isLiked: result.likedByUser
