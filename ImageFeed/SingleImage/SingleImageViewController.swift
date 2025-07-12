@@ -1,10 +1,12 @@
 import UIKit
+import Kingfisher
 
 final class SingleImageViewController: UIViewController {
     
     // MARK: - Public Properties
     
     var image: UIImage?
+    var imageURL: String?
     // MARK: - IB Outlets
     
     @IBOutlet private var imageView: UIImageView!
@@ -27,15 +29,31 @@ final class SingleImageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let image else { return }
-        imageView.image = image
-        imageView.frame.size = image.size
+        guard let url = URL(string: imageURL ?? "") else { return }
+
+        imageView.kf.setImage(
+            with: url,
+            placeholder: nil,
+            options: [.transition(.fade(0.3))],
+            completionHandler: { [weak self] result in
+                guard let self else { return }
+                switch result {
+                case .success(let value):
+                    self.image = value.image
+                    self.imageView.frame.size = value.image.size
+                    self.rescaleAndCenterImageInScrollView(image: value.image)
+                case .failure:
+                    break
+                }
+            }
+        )
         
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
-        
         imageView.contentMode = .center
-        rescaleAndCenterImageInScrollView(image: image)
+        if let image {
+            rescaleAndCenterImageInScrollView(image: image)
+        }
     }
     // MARK: - Private Methods
     

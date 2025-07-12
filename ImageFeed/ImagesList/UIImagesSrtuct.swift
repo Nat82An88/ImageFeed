@@ -1,6 +1,5 @@
 import Foundation
 
-// Структура для представления фотографии в UI
 struct Photo {
     let id: String
     let size: CGSize
