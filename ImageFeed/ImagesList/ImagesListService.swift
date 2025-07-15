@@ -21,17 +21,31 @@ final class ImagesListService {
             print("Неверный URL")
             return
         }
-        let task = session.dataTask(with: url) { [weak self] data, _, error in
+        var request = URLRequest(url: url)
+        if let accessToken = OAuth2TokenStorage().token {
+            request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        }
+        let task = session.dataTask(with: request) { [weak self] data, response, error in
             guard let self else { return }
             defer { self.isLoading = false }
-            guard let data, error == nil else {
-                print("Ошибка загрузки: \(error?.localizedDescription ?? "Неизвестная ошибка")")
-                return
+            if let error {
+                            print("Ошибка загрузки: \(error.localizedDescription)")
+                            return
+                        }
+            guard let data else {
+                            print("Данные не получены")
+                            return
+                        }
+            if let httpResponse = response as? HTTPURLResponse {
+                print("Статус ответа сервера: \(httpResponse.statusCode)")
+            } else {
+                print("Не удалось получить статус ответа")
             }
             do {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
                 let photoResults = try decoder.decode([PhotoResult].self, from: data)
+                print("Получено \(photoResults.count) фотографий")
                 let newPhotos = photoResults.map { result in
                     Photo(
                         id: result.id,
@@ -49,7 +63,7 @@ final class ImagesListService {
                     NotificationCenter.default.post(name: Self.didChangeNotification, object: nil)
                 }
             } catch {
-                print("Ошибка декодирования: \(error.localizedDescription)")
+                print("Ошибка декодирования: (error.localizedDescription)")
             }
         }
         task.resume()
