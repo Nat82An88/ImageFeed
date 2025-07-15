@@ -1,14 +1,19 @@
 import UIKit
 import Kingfisher
 
+protocol ImagesListCellDelegate: AnyObject {
+    func imagesListCellDidTapLike(in cell: ImagesListCell)
+}
+
 final class ImagesListCell: UITableViewCell {
     
+    weak var delegate: ImagesListCellDelegate?
     // MARK: - IB Outlets
     
     @IBOutlet  weak var cellImage: UIImageView!
     @IBOutlet  weak var likeButton: UIButton!
     @IBOutlet  weak var dateLabel: UILabel!
-    // MARK: - Public Properties
+    // MARK: - Reuse Identifier
     
     static let reuseIdentifier = "ImagesListCell"
     // MARK: - View Life Cycle
@@ -18,4 +23,9 @@ final class ImagesListCell: UITableViewCell {
     
             cellImage.kf.cancelDownloadTask()
         }
+    // MARK: - IB Actions
+    
+    @IBAction func likeButtonClicked(_ sender: Any) {
+        delegate?.imagesListCellDidTapLike(in: self)
+    }
 }

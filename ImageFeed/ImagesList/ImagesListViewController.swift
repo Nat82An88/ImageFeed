@@ -118,11 +118,30 @@ extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
         guard let imageListCell = cell as? ImagesListCell else { fatalError("Не удалось преобразовать ячейку к типу ImagesListCell") }
+        imageListCell.delegate = self
         configCell(for: imageListCell, with: indexPath)
         return imageListCell
     }
 }
 // MARK: - UITableViewDelegate
+
+extension ImagesListViewController: ImagesListCellDelegate {
+    func imagesListCellDidTapLike(in cell: ImagesListCell) {
+        guard let indexPath = tableView.indexPath(for: cell) else {
+            return
+        }
+        guard indexPath.row < imagesListService.photos.count else { return }
+        var photo = imagesListService.photos[indexPath.row]
+        photo.isLiked.toggle()
+        imagesListService.updatePhoto(photo, at: indexPath.row)
+        let buttonImage = photo.isLiked
+            ? UIImage(named: "Active")
+            : UIImage(named: "notActive")
+        cell.likeButton.setImage(buttonImage, for: .normal)
+        NotificationCenter.default.post(name: ImagesListService.didChangeNotification,
+                                       object: nil)
+    }
+}
 
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
