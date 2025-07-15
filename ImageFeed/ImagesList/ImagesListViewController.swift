@@ -147,20 +147,17 @@ extension ImagesListViewController: UITableViewDelegate {
     }
     
     private func updateTableViewAnimated() {
-         let oldCount = tableView.numberOfRows(inSection: 0) 
-           
-           tableView.performBatchUpdates({
-               let newCount = self.imagesListService.photos.count
-               
-               if oldCount > newCount {
-                   let indicesToDelete = (newCount..<oldCount).map { IndexPath(row: $0, section: 0) }
-                   self.tableView.deleteRows(at: indicesToDelete, with: .fade)
-               }
-               
-               if oldCount < newCount {
-                   let indicesToInsert = (oldCount..<newCount).map { IndexPath(row: $0, section: 0) }
-                   self.tableView.insertRows(at: indicesToInsert, with: .fade)
-               }
-           }, completion: nil)
-       }
+        let oldCount = tableView.numberOfRows(inSection: 0)
+        tableView.performBatchUpdates({
+            let newCount = self.imagesListService.photos.count
+            if oldCount > newCount {
+                let indicesToDelete = (newCount..<oldCount).map { IndexPath(row: $0, section: 0) }
+                self.tableView.deleteRows(at: indicesToDelete, with: .fade)
+            }
+            if oldCount < newCount {
+                let indicesToInsert = (oldCount..<newCount).map { IndexPath(row: $0, section: 0) }
+                self.tableView.insertRows(at: indicesToInsert, with: .fade)
+            }
+        }, completion: nil)
+    }
 }
