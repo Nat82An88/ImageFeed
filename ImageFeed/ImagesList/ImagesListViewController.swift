@@ -134,10 +134,7 @@ extension ImagesListViewController: ImagesListCellDelegate {
         var photo = imagesListService.photos[indexPath.row]
         photo.isLiked.toggle()
         imagesListService.updatePhoto(photo, at: indexPath.row)
-        let buttonImage = photo.isLiked
-            ? UIImage(named: "Active")
-            : UIImage(named: "notActive")
-        cell.likeButton.setImage(buttonImage, for: .normal)
+        cell.setIsLiked(photo.isLiked)
         NotificationCenter.default.post(name: ImagesListService.didChangeNotification,
                                        object: nil)
     }

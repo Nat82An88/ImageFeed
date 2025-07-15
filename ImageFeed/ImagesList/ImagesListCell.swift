@@ -16,6 +16,14 @@ final class ImagesListCell: UITableViewCell {
     // MARK: - Reuse Identifier
     
     static let reuseIdentifier = "ImagesListCell"
+    // MARK: - Private Methods
+    
+    func setIsLiked(_ isLiked: Bool) {
+        let buttonImage = isLiked
+            ? UIImage(named: "Active")
+            : UIImage(named: "notActive")
+        likeButton.setImage(buttonImage, for: .normal)
+    }
     // MARK: - View Life Cycle
         
         override func prepareForReuse() {
