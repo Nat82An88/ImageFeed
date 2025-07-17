@@ -1,4 +1,5 @@
 import UIKit
+import ProgressHUD
 
 final class ImagesListService {
     
@@ -73,7 +74,7 @@ final class ImagesListService {
             completion(.failure(NSError(domain: "NoAccessToken", code: 401, userInfo: nil)))
             return
         }
-        guard let url = URL(string: "https://api.unsplash.com/photos/\(photoId)/likes") else {
+        guard let url = URL(string: "https://api.unsplash.com/photos/\(photoId)/like") else {
             completion(.failure(NSError(domain: "InvalidURL", code: -1, userInfo: nil)))
             return
         }
@@ -90,8 +91,8 @@ final class ImagesListService {
                 completion(.failure(NSError(domain: "InvalidResponse", code: -1, userInfo: nil)))
                 return
             }
-            let expectedStatus = isLiked ? 201 : 204
-            if httpResponse.statusCode == expectedStatus {
+            let isSuccess = (200...299).contains(httpResponse.statusCode)
+            if isSuccess {
                 DispatchQueue.main.async {
                     if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
                         var updatedPhoto = self.photos[index]
@@ -106,18 +107,18 @@ final class ImagesListService {
                 completion(.failure(NSError(domain: "RequestFailed", code: httpResponse.statusCode, userInfo: nil)))
             }
         }
+        
         task.resume()
     }
 }
-
-extension ImagesListService {
-    static let photoUpdatedNotification = Notification.Name("PhotoUpdated")
-    
-    func updatePhoto(_ photo: Photo, at index: Int) {
-        photos[index] = photo
-        NotificationCenter.default.post(
-            name: ImagesListService.photoUpdatedNotification,
-            object: index
-        )
+    extension ImagesListService {
+        static let photoUpdatedNotification = Notification.Name("PhotoUpdated")
+        
+        func updatePhoto(_ photo: Photo, at index: Int) {
+            photos[index] = photo
+            NotificationCenter.default.post(
+                name: ImagesListService.photoUpdatedNotification,
+                object: index
+            )
+        }
     }
-}

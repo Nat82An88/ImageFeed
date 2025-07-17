@@ -1,5 +1,6 @@
 import UIKit
 import Kingfisher
+import ProgressHUD
 
 class ImagesListViewController: UIViewController {
     
@@ -132,11 +133,30 @@ extension ImagesListViewController: ImagesListCellDelegate {
         }
         guard indexPath.row < imagesListService.photos.count else { return }
         var photo = imagesListService.photos[indexPath.row]
-        photo.isLiked.toggle()
-        imagesListService.updatePhoto(photo, at: indexPath.row)
-        cell.setIsLiked(photo.isLiked)
-        NotificationCenter.default.post(name: ImagesListService.didChangeNotification,
-                                       object: nil)
+        UIBlockingProgressHUD.animate()
+        imagesListService.changeLike(photoId: photo.id, isLiked: photo.isLiked) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                UIBlockingProgressHUD.dismiss()
+                switch result {
+                case .success:
+                    photo.isLiked.toggle()
+                    self.imagesListService.updatePhoto(photo, at: indexPath.row)
+                    cell.setIsLiked(photo.isLiked)
+                    NotificationCenter.default.post(name: ImagesListService.didChangeNotification,
+                                                    object: nil)
+                case .failure(let error):
+                    let alertController = UIAlertController(title: "Ошибка",
+                                                            message: error.localizedDescription,
+                                                            preferredStyle: .alert)
+                    let okAction = UIAlertAction(title: "ОК", style: .default)
+                    alertController.addAction(okAction)
+                    self.present(alertController, animated: true, completion: nil)
+                    photo.isLiked.toggle()
+                    cell.setIsLiked(photo.isLiked)
+                }
+            }
+        }
     }
 }
 
