@@ -45,7 +45,6 @@ final class ImagesListService {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .iso8601
                 let photoResults = try decoder.decode([PhotoResult].self, from: data)
-                print("Получено \(photoResults.count) фотографий")
                 let newPhotos = photoResults.map { result in
                     Photo(
                         id: result.id,
@@ -91,16 +90,17 @@ final class ImagesListService {
                 completion(.failure(NSError(domain: "InvalidResponse", code: -1, userInfo: nil)))
                 return
             }
-            let isSuccess = (httpResponse.statusCode == 201 && isLiked) ||
-            (httpResponse.statusCode == 204 && !isLiked)
-            if isSuccess {
-                if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
-                    var updatedPhoto = self.photos[index]
-                    updatedPhoto.isLiked = isLiked
-                    self.updatePhoto(updatedPhoto, at: index)
-                    completion(.success(()))
-                } else {
-                    completion(.failure(NSError(domain: "PhotoNotFound", code: -1, userInfo: nil)))
+            let expectedStatus = isLiked ? 201 : 204
+            if httpResponse.statusCode == expectedStatus {
+                DispatchQueue.main.async {
+                    if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
+                        var updatedPhoto = self.photos[index]
+                        updatedPhoto.isLiked = isLiked
+                        self.updatePhoto(updatedPhoto, at: index)
+                        completion(.success(()))
+                    } else {
+                        completion(.failure(NSError(domain: "PhotoNotFound", code: -1, userInfo: nil)))
+                    }
                 }
             } else {
                 completion(.failure(NSError(domain: "RequestFailed", code: httpResponse.statusCode, userInfo: nil)))
