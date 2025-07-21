@@ -12,6 +12,14 @@ final class ImagesListService {
     private var isLoading = false
     private let session = URLSession.shared
     private let perPage = 10
+    // MARK: - Reset Method
+    
+    func reset() {
+        photos = []
+        lastLoadedPage = 1
+        isLoading = false
+        NotificationCenter.default.post(name: ImagesListService.didChangeNotification, object: self)
+    }
     // MARK: - Private Methods
     
     func fetchPhotosNextPage() {
@@ -111,14 +119,14 @@ final class ImagesListService {
         task.resume()
     }
 }
-    extension ImagesListService {
-        static let photoUpdatedNotification = Notification.Name("PhotoUpdated")
-        
-        func updatePhoto(_ photo: Photo, at index: Int) {
-            photos[index] = photo
-            NotificationCenter.default.post(
-                name: ImagesListService.photoUpdatedNotification,
-                object: index
-            )
-        }
+extension ImagesListService {
+    static let photoUpdatedNotification = Notification.Name("PhotoUpdated")
+    
+    func updatePhoto(_ photo: Photo, at index: Int) {
+        photos[index] = photo
+        NotificationCenter.default.post(
+            name: ImagesListService.photoUpdatedNotification,
+            object: index
+        )
     }
+}

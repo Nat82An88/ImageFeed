@@ -16,6 +16,15 @@ final class ProfileImageService {
     
     static let shared = ProfileImageService()
     private init() {}
+    // MARK: - Reset Method
+    
+    func reset() {
+        avatarURL = nil
+        activeTasks.forEach{ $0.cancel() }
+        activeTasks.removeAll()
+        isFetching = false
+        NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self, userInfo: ["URL": ""])
+    }
     // MARK: - Request Creation
     
     private func makeProfileImageRequest(username: String) throws -> URLRequest {

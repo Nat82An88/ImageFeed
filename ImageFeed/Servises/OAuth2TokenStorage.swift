@@ -2,6 +2,7 @@ import UIKit
 import SwiftKeychainWrapper
 
 final class OAuth2TokenStorage {
+    static let shared = OAuth2TokenStorage()
     private let key = "accessToken"
     var token: String? {
         get {

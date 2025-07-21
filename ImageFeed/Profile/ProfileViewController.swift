@@ -165,7 +165,7 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private func didTapLogoutButton() {
-        tokenStorage.token = nil
+        ProfileLogoutService.shared.logout()
         guard let authViewController = UIStoryboard(name: "Main", bundle: .main)
             .instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
             print("Ошибка: не удалось создать AuthViewController")

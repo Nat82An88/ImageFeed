@@ -12,6 +12,14 @@ final class ProfileService {
     
     static let shared = ProfileService()
     private init() {}
+    // MARK: - Reset Method
+    
+    func reset() {
+        profile = nil
+        activeTasks.forEach { $0.cancel() }
+        activeTasks.removeAll()
+        isFetching = false
+    }
     // MARK: - Request Creation
     
     private func makeProfileRequest(accessToken: String) throws -> URLRequest {
