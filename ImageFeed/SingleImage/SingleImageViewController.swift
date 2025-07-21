@@ -1,5 +1,6 @@
 import UIKit
 import Kingfisher
+import ProgressHUD
 
 final class SingleImageViewController: UIViewController {
     
@@ -30,12 +31,14 @@ final class SingleImageViewController: UIViewController {
         super.viewDidLoad()
         
         guard let url = URL(string: imageURL ?? "") else { return }
-
+        UIBlockingProgressHUD.animate()
+        
         imageView.kf.setImage(
             with: url,
             placeholder: nil,
             options: [.transition(.fade(0.3))],
             completionHandler: { [weak self] result in
+                UIBlockingProgressHUD.dismiss()
                 guard let self else { return }
                 switch result {
                 case .success(let value):
@@ -43,7 +46,7 @@ final class SingleImageViewController: UIViewController {
                     self.imageView.frame.size = value.image.size
                     self.rescaleAndCenterImageInScrollView(image: value.image)
                 case .failure:
-                    break
+                    self.showError()
                 }
             }
         )
@@ -56,6 +59,13 @@ final class SingleImageViewController: UIViewController {
         }
     }
     // MARK: - Private Methods
+    
+    private func showError() {
+        let alert = UIAlertController(title: "Ошибка", message: "Что-то пошло не так. Попробовать еще раз?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Не надо", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Повторить", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
     
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
         let minZoomScale = scrollView.minimumZoomScale
