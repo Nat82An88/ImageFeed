@@ -20,17 +20,17 @@ final class ImagesListCell: UITableViewCell {
     
     func setIsLiked(_ isLiked: Bool) {
         let buttonImage = isLiked
-            ? UIImage(named: "Active")
-            : UIImage(named: "notActive")
+        ? UIImage(named: "Active")
+        : UIImage(named: "notActive")
         likeButton.setImage(buttonImage, for: .normal)
     }
     // MARK: - View Life Cycle
-        
-        override func prepareForReuse() {
-            super.prepareForReuse()
     
-            cellImage.kf.cancelDownloadTask()
-        }
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        cellImage.kf.cancelDownloadTask()
+    }
     // MARK: - IB Actions
     
     @IBAction func likeButtonClicked(_ sender: Any) {
