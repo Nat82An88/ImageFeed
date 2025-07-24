@@ -165,12 +165,32 @@ final class ProfileViewController: UIViewController {
     
     @objc
     private func didTapLogoutButton() {
-        tokenStorage.token = nil
-        guard let authViewController = UIStoryboard(name: "Main", bundle: .main)
-            .instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
-            print("Ошибка: не удалось создать AuthViewController")
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверены что хотите выйти?",
+            preferredStyle: .alert
+        )
+        let yesAction = UIAlertAction(
+            title: "Да",
+            style: .default
+        ) { _ in
+            self.performLogout()
+        }
+        let noAction = UIAlertAction(
+            title: "Нет",
+            style: .default,
+        )
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
+        present(alert, animated: true, completion: nil)
+    }
+    private func performLogout() {
+        ProfileLogoutService.shared.logout()
+        guard let window = UIApplication.shared.windows.first else {
+            print("Не удалось получить окно приложения")
             return
         }
-        present(authViewController, animated: true, completion: nil)
+        let splashViewController = SplashViewController()
+        window.rootViewController = splashViewController
     }
 }
