@@ -42,7 +42,7 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
             \.estimatedProgress,
              options: [],
              changeHandler: { [weak self] _, _ in
-                 guard let self else { return }
+                 guard self != nil else { return }
              })
         presenter?.viewDidLoad()
     }
@@ -70,7 +70,6 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     func setProgressHidden(_ isHidden: Bool) {
         progressView.isHidden = isHidden
     }
-    
 }
 // MARK: - WKNavigationDelegate
 

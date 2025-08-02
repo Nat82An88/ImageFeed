@@ -6,18 +6,23 @@ protocol AuthHelperProtocol {
 }
 
 final class AuthHelper: AuthHelperProtocol {
-    let configuration: AuthConfiguration
+    // MARK: - Properties
+    
+    private let configuration: AuthConfiguration
+    // MARK: - Initializer
     
     init(configuration: AuthConfiguration = .standard) {
         self.configuration = configuration
     }
+    // MARK: - Request Creation
     
     func authRequest() -> URLRequest? {
         guard let url = authURL() else { return nil }
         return URLRequest(url: url)
     }
+    // MARK: - AuthURL Creation
     
-    func authURL() -> URL? {
+    private func authURL() -> URL? {
         guard var urlComponents = URLComponents(string: configuration.authURLString) else {
             return nil
         }
@@ -29,6 +34,7 @@ final class AuthHelper: AuthHelperProtocol {
         ]
         return urlComponents.url
     }
+    // MARK: - AuthCode Extraction
     
     func code(from url: URL) -> String? {
         if let urlComponents = URLComponents(string: url.absoluteString),
