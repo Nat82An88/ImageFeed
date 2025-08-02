@@ -14,7 +14,7 @@ final class WebViewPresenter: WebViewPresenterProtocol {
     // MARK: - Properties
     
     weak var view: WebViewViewControllerProtocol?
-    private let authHelper: AuthHelperProtocol
+    var authHelper: AuthHelperProtocol
     // MARK: - Initializer
     
     init(authHelper: AuthHelperProtocol) {
@@ -38,7 +38,7 @@ final class WebViewPresenter: WebViewPresenterProtocol {
         view?.setProgressHidden(shouldHideProgress)
     }
     
-    private func shouldHideProgress(for value: Float) -> Bool {
+     func shouldHideProgress(for value: Float) -> Bool {
         abs(value - 1.0) <= 0.0001
     }
     // MARK: - AUTH Code Method

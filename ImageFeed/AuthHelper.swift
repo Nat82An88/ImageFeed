@@ -8,7 +8,7 @@ protocol AuthHelperProtocol {
 final class AuthHelper: AuthHelperProtocol {
     // MARK: - Properties
     
-    private let configuration: AuthConfiguration
+    let configuration: AuthConfiguration
     // MARK: - Initializer
     
     init(configuration: AuthConfiguration = .standard) {
@@ -22,7 +22,7 @@ final class AuthHelper: AuthHelperProtocol {
     }
     // MARK: - AuthURL Creation
     
-    private func authURL() -> URL? {
+    func authURL() -> URL? {
         guard var urlComponents = URLComponents(string: configuration.authURLString) else {
             return nil
         }
