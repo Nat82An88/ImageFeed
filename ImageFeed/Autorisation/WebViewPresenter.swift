@@ -12,26 +12,15 @@ public protocol WebViewPresenterProtocol {
 
 final class WebViewPresenter: WebViewPresenterProtocol {
     weak var view: WebViewViewControllerProtocol?
-    static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
+    var authHelper: AuthHelperProtocol
+    
+    init(authHelper: AuthHelperProtocol) {
+        self.authHelper = authHelper
+    }
     
     func viewDidLoad() {
         guard let view else { return }
-        
-        guard var urlComponents = URLComponents(string: WebViewPresenter.unsplashAuthorizeURLString) else {
-            print("Ошибка: не удалось создать URLComponents из строки")
-            return
-        }
-        urlComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: Constants.accessKey),
-            URLQueryItem(name: "response_type", value: "code"),
-            URLQueryItem(name: "redirect_uri", value: Constants.redirectUri),
-            URLQueryItem(name: "scope", value: Constants.accessScope)
-        ]
-        guard let url = urlComponents.url else {
-            print("Ошибка: не удалось получить URL из URLComponents")
-            return
-        }
-        let request = URLRequest(url: url)
+        guard let request = authHelper.authRequest() else { return }
         didUpdateProgressValue(0)
         view.load(request: request)
     }
@@ -49,14 +38,6 @@ final class WebViewPresenter: WebViewPresenterProtocol {
     }
     
     func code(from url: URL) -> String? {
-        guard
-            let urlComponents = URLComponents(string: url.absoluteString),
-            urlComponents.path == "/oauth/authorize/native",
-            let items = urlComponents.queryItems,
-            let codeItem = items.first(where: { $0.name == "code" })
-        else {
-            return nil
-        }
-        return codeItem.value
+        authHelper.code(from: url)
     }
 }
