@@ -5,6 +5,7 @@ final class ImagesListService {
     // MARK: - Private Properties
     
     static let didChangeNotification = Notification.Name("ImagesListServiceDidChange")
+    static let photoUpdatedNotification = Notification.Name("PhotoUpdated")
     
     private(set) var photos: [Photo] = []
     private var lastLoadedPage = 1
@@ -19,7 +20,7 @@ final class ImagesListService {
         isLoading = false
         NotificationCenter.default.post(name: ImagesListService.didChangeNotification, object: self)
     }
-    // MARK: - Private Methods
+    // MARK: - Public Methods
     
     func fetchPhotosNextPage() {
         guard !isLoading else { return }
@@ -117,9 +118,6 @@ final class ImagesListService {
         
         task.resume()
     }
-}
-extension ImagesListService {
-    static let photoUpdatedNotification = Notification.Name("PhotoUpdated")
     
     func updatePhoto(_ photo: Photo, at index: Int) {
         photos[index] = photo
