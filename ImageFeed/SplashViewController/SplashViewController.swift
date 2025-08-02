@@ -1,7 +1,6 @@
 import UIKit
 
 final class SplashViewController: UIViewController {
-    
     // MARK: - Private Properties
     
     private let oauth2Service = OAuth2Service.shared
@@ -74,7 +73,6 @@ final class SplashViewController: UIViewController {
         present(authViewController, animated: true, completion: nil)
     }
 }
-
 // MARK: - AuthViewControllerDelegate
 
 extension SplashViewController: AuthViewControllerDelegate {

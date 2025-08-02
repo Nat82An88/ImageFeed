@@ -6,7 +6,6 @@ protocol AuthViewControllerDelegate: AnyObject {
 }
 
 final class AuthViewController: UIViewController {
-    
     weak var delegate: AuthViewControllerDelegate?
     // MARK: - Private Properties
     

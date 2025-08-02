@@ -1,6 +1,7 @@
 import UIKit
 
 final class TabBarController: UITabBarController {
+    // MARK: - View Life Cycles
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,5 +20,4 @@ final class TabBarController: UITabBarController {
         )
         self.viewControllers = [imagesListViewController, profileViewController]
     }
-    
 }

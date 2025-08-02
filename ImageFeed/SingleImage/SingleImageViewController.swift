@@ -3,7 +3,6 @@ import Kingfisher
 import ProgressHUD
 
 final class SingleImageViewController: UIViewController {
-    
     // MARK: - Public Properties
     
     var image: UIImage?

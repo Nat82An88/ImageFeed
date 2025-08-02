@@ -1,7 +1,6 @@
 import UIKit
 
 final class ProfileImageService {
-    
     // MARK: - Private Properties
     
     private let urlSession = URLSession.shared

@@ -2,7 +2,6 @@ import UIKit
 import ProgressHUD
 
 final class ImagesListService {
-    
     // MARK: - Private Properties
     
     static let didChangeNotification = Notification.Name("ImagesListServiceDidChange")

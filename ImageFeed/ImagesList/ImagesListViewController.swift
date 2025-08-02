@@ -3,7 +3,6 @@ import Kingfisher
 import ProgressHUD
 
 class ImagesListViewController: UIViewController {
-    
     // MARK: - IB Outlets
     
     @IBOutlet private var tableView: UITableView!

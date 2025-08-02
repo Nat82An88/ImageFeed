@@ -2,7 +2,6 @@ import UIKit
 import Kingfisher
 
 final class ProfileViewController: UIViewController {
-    
     // MARK: - Private Properties
     
     private let tokenStorage = OAuth2TokenStorage()
