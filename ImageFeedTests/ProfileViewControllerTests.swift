@@ -21,38 +21,41 @@ final class ProfileViewControllerTests: XCTestCase {
     
     func testViewDidLoad_CallsPresenter() {
         // when
-        sut.viewDidLoad()
         
+        sut.viewDidLoad()
         // then
+        
         XCTAssertTrue(presenterSpy.viewDidLoadCalled)
     }
     
     func testShowLogoutConfirmationAlert_PresentsAlert() {
         // given
+        
         let window = UIWindow()
         window.rootViewController = sut
         window.makeKeyAndVisible()
-        
         // when
-        sut.showLogoutConfirmationAlert()
         
+        sut.showLogoutConfirmationAlert()
         // then
+        
         XCTAssertTrue(sut.presentedViewController is UIAlertController)
         XCTAssertEqual((sut.presentedViewController as? UIAlertController)?.title, "Пока, пока!")
     }
-   
+    
     func testHandleAvatarUpdateNotification_CallsPresenter() {
         // given
+        
         let notification = Notification(
             name: ProfileImageService.didChangeNotification,
             object: nil,
             userInfo: ["URL": "https://test.com/avatar.jpg"]
         )
-        
         // when
-        NotificationCenter.default.post(notification)
         
+        NotificationCenter.default.post(notification)
         // then
+        
         XCTAssertTrue(presenterSpy.handleAvatarUpdateCalled)
     }
 }
