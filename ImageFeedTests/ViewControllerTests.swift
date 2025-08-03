@@ -3,136 +3,214 @@ import XCTest
 import UIKit
 
 class ImagesListViewControllerTests: XCTestCase {
-    var sut: ImagesListViewController!
-    var presenter: ImagesListPresenterSpy!
-    var tableView: UITableView!
-    
-    override func setUp() {
-        super.setUp()
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        sut = storyboard.instantiateViewController(
-            withIdentifier: "ImagesListViewController") as? ImagesListViewController
-        presenter = ImagesListPresenterSpy()
-        sut.presenter = presenter
-        tableView = UITableView()
-        sut.tableView = tableView
-        _ = sut.view
-    }
-    
-    override func tearDown() {
-        sut = nil
-        presenter = nil
-        tableView = nil
-        super.tearDown()
-    }
-    
-    func testViewControllerCallsViewDidLoad() {
-        // when
-        sut.viewDidLoad()
-        
-        // then
-        XCTAssertTrue(presenter.viewDidLoadCalled)
-    }
-    
-    func testTableViewHasDataSource() {
-        // then
-        XCTAssertNotNil(sut.tableView.dataSource)
-        XCTAssertTrue(sut.tableView.dataSource is ImagesListViewController)
-    }
-    
-    func testTableViewHasDelegate() {
-        // then
-        XCTAssertNotNil(sut.tableView.delegate)
-        XCTAssertTrue(sut.tableView.delegate is ImagesListViewController)
-    }
-    
-    func testCellConfiguration() {
+    func testViewDidLoadCallsLoadNextPhotos() {
         // given
-        let testPhoto = Photo(
-            id: "test",
-            size: CGSize(width: 100, height: 100),
-            createdAt: Date(),
-            welcomeDescription: "Test",
-            thumbImageURL: "https://test.com",
-            largeImageURL: "https://test.com",
-            isLiked: false
-        )
-        presenter.photos = [testPhoto]
-        
-        tableView.register(ImagesListCell.self, forCellReuseIdentifier: ImagesListCell.reuseIdentifier)
+        let service = ImagesListServiceStub()
+        let view = ImagesListViewSpy()
+        let presenter = ImagesListPresenter(imagesListService: service)
+        presenter.view = view
         
         // when
-        let cell = sut.tableView(tableView, cellForRowAt: IndexPath(row: 0, section: 0)) as! ImagesListCell
+        presenter.viewDidLoad()
         
         // then
-        XCTAssertNotNil(cell.dateLabel.text)
-        XCTAssertEqual(cell.likeButton.currentImage, UIImage(named: "notActive"))
+        XCTAssertTrue(service.fetchPhotosNextPageCalled)
     }
     
-    func testLikeButtonAction() {
+    func testWillDisplayCellCallsLoadNextPhotosWhenNeeded() {
         // given
-        let testPhoto = Photo(
-            id: "test",
-            size: CGSize(width: 100, height: 100),
-            createdAt: Date(),
-            welcomeDescription: "Test",
-            thumbImageURL: "https://test.com",
-            largeImageURL: "https://test.com",
-            isLiked: false
-        )
-        presenter.photos = [testPhoto]
         
-        tableView.register(ImagesListCell.self, forCellReuseIdentifier: ImagesListCell.reuseIdentifier)
+        let service = ImagesListServiceStub()
+        service.photos = (1...10).map {
+            Photo(
+                id: "\($0)",
+                size: CGSize(width: 100, height: 100),
+                createdAt: Date(),
+                welcomeDescription: nil,
+                thumbImageURL: "",
+                largeImageURL: "",
+                isLiked: false
+            )
+        }
+        service.isLoading = false
         
-        let cell = sut.tableView(tableView, cellForRowAt: IndexPath(row: 0, section: 0)) as! ImagesListCell
-        cell.delegate = sut
-        
+        let view = ImagesListViewSpy()
+        let presenter = ImagesListPresenter(imagesListService: service)
+        presenter.view = view
         // when
-        cell.likeButtonClicked(UIButton())
         
+        presenter.willDisplayCell(at: IndexPath(row: 9, section: 0))
         // then
-        XCTAssertTrue(presenter.changeLikeCalled)
+        
+        XCTAssertTrue(
+            service.fetchPhotosNextPageCalled,
+            "Должна быть вызвана загрузка следующей страницы при отображении предпоследней ячейки"
+        )
     }
     
-    func testWillDisplayCell() {
+    func testChangeLikeCallsService() {
         // given
-        let testPhoto = Photo(
-            id: "test",
-            size: CGSize(width: 100, height: 100),
-            createdAt: Date(),
-            welcomeDescription: "Test",
-            thumbImageURL: "https://test.com",
-            largeImageURL: "https://test.com",
-            isLiked: false
-        )
-        presenter.photos = [testPhoto, testPhoto]
         
+        let service = ImagesListServiceStub()
+        service.photos = [Photo(id: "1", size: CGSize(width: 100, height: 100), createdAt: Date(), welcomeDescription: "Test", thumbImageURL: "", largeImageURL: "", isLiked: false)]
+        let view = ImagesListViewSpy()
+        let presenter = ImagesListPresenter(imagesListService: service)
+        presenter.view = view
         // when
-        sut.tableView(tableView, willDisplay: UITableViewCell(), forRowAt: IndexPath(row: 1, section: 0))
         
+        presenter.changeLike(at: IndexPath(row: 0, section: 0))
         // then
-        XCTAssertTrue(presenter.willDisplayCellCalled)
+        
+        XCTAssertTrue(service.changeLikeCalled)
+        XCTAssertTrue(view.showLoadingIndicatorCalled)
     }
     
-    func testHeightForRow() {
+    func testCalculateCellHeight() {
         // given
-        let testPhoto = Photo(
-            id: "test",
-            size: CGSize(width: 100, height: 100),
-            createdAt: Date(),
-            welcomeDescription: "Test",
-            thumbImageURL: "https://test.com",
-            largeImageURL: "https://test.com",
-            isLiked: false
-        )
-        presenter.photos = [testPhoto]
+        
+        let service = ImagesListServiceStub()
+        service.photos = [Photo(id: "1", size: CGSize(width: 100, height: 200), createdAt: Date(), welcomeDescription: "Test", thumbImageURL: "", largeImageURL: "", isLiked: false)]
+        let presenter = ImagesListPresenter(imagesListService: service)
+        let tableView = UITableView()
         tableView.frame = CGRect(x: 0, y: 0, width: 320, height: 480)
-        
         // when
-        let height = sut.tableView(tableView, heightForRowAt: IndexPath(row: 0, section: 0))
         
+        let height = presenter.calculateCellHeight(for: IndexPath(row: 0, section: 0), tableView: tableView)
         // then
-        XCTAssertEqual(height, 108)
+        
+        let expectedWidth = tableView.bounds.width - 16 - 16
+        let expectedHeight = (200 * expectedWidth / 100) + 4 + 4
+        XCTAssertEqual(height, expectedHeight)
+    }
+    
+    func testPhotoForIndexPath() {
+        // given
+        
+        let service = ImagesListServiceStub()
+        let testPhoto = Photo(id: "1", size: CGSize(width: 100, height: 100), createdAt: Date(), welcomeDescription: "Test", thumbImageURL: "", largeImageURL: "", isLiked: false)
+        service.photos = [testPhoto]
+        let presenter = ImagesListPresenter(imagesListService: service)
+        // when
+        
+        let photo = presenter.photoForIndexPath(IndexPath(row: 0, section: 0))
+        // then
+        
+        XCTAssertEqual(photo?.id, testPhoto.id)
+    }
+}
+
+final class ImagesListPresenterTests: XCTestCase {
+    func testViewDidLoadCallsLoadNextPhotos() {
+        // given
+        
+        let service = ImagesListServiceStub()
+        let view = ImagesListViewSpy()
+        let presenter = ImagesListPresenter(imagesListService: service)
+        presenter.view = view
+        // when
+        
+        presenter.viewDidLoad()
+        // then
+        
+        XCTAssertTrue(service.fetchPhotosNextPageCalled)
+    }
+    
+    func testWillDisplayCellCallsLoadNextPhotosWhenNeeded() {
+        // given
+        
+        let service = ImagesListServiceStub()
+        service.photos = Array(repeating: Photo(
+            id: "1",
+            size: CGSize(width: 100, height: 100),
+            createdAt: Date(),
+            welcomeDescription: "Test",
+            thumbImageURL: "",
+            largeImageURL: "",
+            isLiked: false
+        ), count: 10)
+        service.isLoading = false
+        
+        let view = ImagesListViewSpy()
+        let presenter = ImagesListPresenter(imagesListService: service)
+        presenter.view = view
+        
+        presenter.willDisplayCell(at: IndexPath(row: 9, section: 0))
+        // then
+        
+        XCTAssertTrue(service.fetchPhotosNextPageCalled)
+    }
+    
+    func testChangeLikeCallsService() {
+        // given
+        
+        let service = ImagesListServiceStub()
+        service.photos = [Photo(id: "1", size: CGSize(width: 100, height: 100), createdAt: Date(), welcomeDescription: "Test", thumbImageURL: "", largeImageURL: "", isLiked: false)]
+        let view = ImagesListViewSpy()
+        let presenter = ImagesListPresenter(imagesListService: service)
+        presenter.view = view
+        // when
+        
+        presenter.changeLike(at: IndexPath(row: 0, section: 0))
+        // then
+        
+        XCTAssertTrue(service.changeLikeCalled)
+        XCTAssertTrue(view.showLoadingIndicatorCalled)
+    }
+    
+    func testCalculateCellHeight() {
+        // given
+        
+        let service = ImagesListServiceStub()
+        service.photos = [Photo(id: "1", size: CGSize(width: 100, height: 200), createdAt: Date(), welcomeDescription: "Test", thumbImageURL: "", largeImageURL: "", isLiked: false)]
+        let presenter = ImagesListPresenter(imagesListService: service)
+        let tableView = UITableView()
+        tableView.frame = CGRect(x: 0, y: 0, width: 320, height: 480)
+        // when
+        
+        let height = presenter.calculateCellHeight(for: IndexPath(row: 0, section: 0), tableView: tableView)
+        // then
+        
+        let expectedWidth = tableView.bounds.width - 16 - 16
+        let expectedHeight = (200 * expectedWidth / 100) + 4 + 4
+        XCTAssertEqual(height, expectedHeight)
+    }
+    
+    func testPhotoForIndexPath() {
+        // given
+        
+        let service = ImagesListServiceStub()
+        let testPhoto = Photo(id: "1", size: CGSize(width: 100, height: 100), createdAt: Date(), welcomeDescription: "Test", thumbImageURL: "", largeImageURL: "", isLiked: false)
+        service.photos = [testPhoto]
+        let presenter = ImagesListPresenter(imagesListService: service)
+        // when
+        
+        let photo = presenter.photoForIndexPath(IndexPath(row: 0, section: 0))
+        // then
+        
+        XCTAssertEqual(photo?.id, testPhoto.id)
+    }
+}
+
+final class ImagesListCellTests: XCTestCase {
+    func testLikeButtonActionNotifiesDelegate() {
+        // given
+        
+        let cell = ImagesListCell()
+        let delegate = ImagesListCellDelegateSpy()
+        cell.delegate = delegate
+        // when
+        
+        cell.likeButtonClicked(UIButton())
+        // then
+        
+        XCTAssertTrue(delegate.didTapLikeCalled)
+    }
+}
+
+final class ImagesListCellDelegateSpy: ImagesListCellDelegate {
+    var didTapLikeCalled = false
+    
+    func imagesListCellDidTapLike(in cell: ImagesListCell) {
+        didTapLikeCalled = true
     }
 }

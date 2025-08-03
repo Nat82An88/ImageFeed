@@ -20,7 +20,7 @@ public protocol ImagesListPresenterProtocol: AnyObject {
     func photoForIndexPath(_ indexPath: IndexPath) -> Photo?
 }
 
-protocol ImagesListServiceProtocol {
+public protocol ImagesListServiceProtocol {
     var photos: [Photo] { get }
     var isLoading: Bool { get }
     func fetchPhotosNextPage(completion: @escaping (Result<[Photo], Error>) -> Void)

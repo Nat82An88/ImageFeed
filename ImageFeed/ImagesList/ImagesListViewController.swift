@@ -39,8 +39,8 @@ final class ImagesListViewController: UIViewController {
     private func setupTableView() {
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
-    
     // MARK: - Navigation
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == SegueIdentifiers.showSingleImage {
             guard
@@ -57,8 +57,8 @@ final class ImagesListViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
         }
     }
-    
     // MARK: - Cell Configuration
+    
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         guard let photo = presenter.photoForIndexPath(indexPath) else {
             cell.cellImage.image = UIImage(named: "placeholder_error")
@@ -82,8 +82,8 @@ final class ImagesListViewController: UIViewController {
         cell.setIsLiked(photo.isLiked)
     }
 }
-
 // MARK: - UITableViewDataSource
+
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return presenter.photosCount
@@ -99,8 +99,8 @@ extension ImagesListViewController: UITableViewDataSource {
         return cell
     }
 }
-
 // MARK: - UITableViewDelegate
+
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: SegueIdentifiers.showSingleImage, sender: indexPath)
@@ -114,16 +114,16 @@ extension ImagesListViewController: UITableViewDelegate {
         return presenter.calculateCellHeight(for: indexPath, tableView: tableView)
     }
 }
-
 // MARK: - ImagesListCellDelegate
+
 extension ImagesListViewController: ImagesListCellDelegate {
     func imagesListCellDidTapLike(in cell: ImagesListCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         presenter.changeLike(at: indexPath)
     }
 }
-
 // MARK: - ImagesListViewProtocol
+
 extension ImagesListViewController: ImagesListViewProtocol {
     func updateTableViewAnimated(oldCount: Int, newCount: Int) {
         guard oldCount != newCount else { return }

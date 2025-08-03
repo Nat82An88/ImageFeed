@@ -3,23 +3,23 @@ import Foundation
 
 final class ImagesListPresenter: ImagesListPresenterProtocol {
     // MARK: - Properties
+    
     weak var view: ImagesListViewProtocol?
     private let imagesListService: ImagesListServiceProtocol
     
     var photosCount: Int {
         return imagesListService.photos.count
     }
-    
     var photos: [Photo] {
         return imagesListService.photos
     }
-    
     // MARK: - Initialization
+    
     init(imagesListService: ImagesListServiceProtocol = ImagesListService()) {
         self.imagesListService = imagesListService
     }
-    
     // MARK: - Public Methods
+    
     func viewDidLoad() {
         loadNextPhotos()
     }
@@ -67,8 +67,8 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
         guard photos.indices.contains(indexPath.row) else { return nil }
         return photos[indexPath.row]
     }
-    
     // MARK: - Private Methods
+    
     private func loadNextPhotos() {
         imagesListService.fetchPhotosNextPage { [weak self] result in
             guard let self = self else { return }

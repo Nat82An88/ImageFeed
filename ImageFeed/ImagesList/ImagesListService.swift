@@ -3,13 +3,14 @@ import ProgressHUD
 
 final class ImagesListService: ImagesListServiceProtocol {
     // MARK: - Properties
+    
     private(set) var photos: [Photo] = []
     private(set) var isLoading = false
     private var lastLoadedPage = 1
     private let perPage = 10
     private let session = URLSession.shared
-    
     // MARK: - Public Methods
+    
     func fetchPhotosNextPage(completion: @escaping (Result<[Photo], Error>) -> Void) {
         guard !isLoading else { return }
         isLoading = true
@@ -26,15 +27,15 @@ final class ImagesListService: ImagesListServiceProtocol {
         }
         
         let task = session.dataTask(with: request) { [weak self] data, response, error in
-            guard let self = self else { return }
+            guard let self else { return }
             defer { self.isLoading = false }
             
-            if let error = error {
+            if let error {
                 completion(.failure(error))
                 return
             }
             
-            guard let data = data else {
+            guard let data else {
                 completion(.failure(NetworkError.noData))
                 return
             }
@@ -72,7 +73,7 @@ final class ImagesListService: ImagesListServiceProtocol {
         }
         
         let task = session.dataTask(with: request) { [weak self] data, response, error in
-            if let error = error {
+            if let error {
                 completion(.failure(error))
                 return
             }
@@ -93,8 +94,8 @@ final class ImagesListService: ImagesListServiceProtocol {
         
         task.resume()
     }
-    
     // MARK: - Private Methods
+    
     private func makeURL(page: Int, perPage: Int) -> URL? {
         var components = URLComponents(string: "https://api.unsplash.com/photos")
         components?.queryItems = [
@@ -104,6 +105,7 @@ final class ImagesListService: ImagesListServiceProtocol {
         return components?.url
     }
 }
+
 extension PhotoResult {
     func toPhoto() -> Photo {
         return Photo(
