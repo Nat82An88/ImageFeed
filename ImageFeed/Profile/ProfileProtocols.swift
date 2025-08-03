@@ -1,6 +1,5 @@
 import Foundation
-
-protocol ProfilePresenterProtocol: AnyObject {
+ public protocol ProfilePresenterProtocol: AnyObject {
     var view: ProfileViewControllerProtocol? { get set }
     func viewDidLoad()
     func performLogout()
@@ -8,7 +7,7 @@ protocol ProfilePresenterProtocol: AnyObject {
     func handleAvatarUpdate(_ notification: Notification)
 }
 
-protocol ProfileViewControllerProtocol: AnyObject {
+public protocol ProfileViewControllerProtocol: AnyObject {
     func updateProfileDetails(profile: Profile)
     func updateAvatar(url: URL)
     func showDefaultAvatar()
@@ -16,7 +15,7 @@ protocol ProfileViewControllerProtocol: AnyObject {
     func switchToSplashScreen()
 }
 
-protocol ProfileServiceProtocol: AnyObject {
+public protocol ProfileServiceProtocol: AnyObject {
     var profile: Profile? { get }
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void)
     func reset()
@@ -24,7 +23,7 @@ protocol ProfileServiceProtocol: AnyObject {
 
 extension ProfileService: ProfileServiceProtocol {}
 
-protocol ProfileImageServiceProtocol: AnyObject {
+public protocol ProfileImageServiceProtocol: AnyObject {
     var avatarURL: String? { get }
     func fetchProfileImageURL(username: String, completion: @escaping (Result<String, Error>) -> Void)
     func reset()
@@ -32,7 +31,7 @@ protocol ProfileImageServiceProtocol: AnyObject {
 
 extension ProfileImageService: ProfileImageServiceProtocol {}
 
-protocol ProfileLogoutServiceProtocol: AnyObject {
+public protocol ProfileLogoutServiceProtocol: AnyObject {
     func logout()
 }
 
