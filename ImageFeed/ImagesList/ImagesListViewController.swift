@@ -2,16 +2,20 @@ import UIKit
 import Kingfisher
 import ProgressHUD
 
-class ImagesListViewController: UIViewController {
+final class ImagesListViewController: UIViewController {
+    // MARK: - Constants
+    
+    private enum SegueIdentifiers {
+        static let showSingleImage = "ShowSingleImage"
+    }
     // MARK: - IB Outlets
     
-    @IBOutlet private var tableView: UITableView!
-    // MARK: - Private Properties
+    @IBOutlet internal var tableView: UITableView!
+    // MARK: - Properties
     
-    private let showSingleImageSegueIdentifier = "ShowSingleImage"
-    private var presenter: ImagesListPresenterProtocol!
+    var presenter: ImagesListPresenterProtocol!
     
-    private lazy var dateFormatter: DateFormatter = {
+    internal lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
         formatter.timeStyle = .none
@@ -35,10 +39,10 @@ class ImagesListViewController: UIViewController {
     private func setupTableView() {
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
     }
-    // MARK: - Navigation
     
+    // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == showSingleImageSegueIdentifier {
+        if segue.identifier == SegueIdentifiers.showSingleImage {
             guard
                 let viewController = segue.destination as? SingleImageViewController,
                 let indexPath = sender as? IndexPath,
@@ -53,48 +57,53 @@ class ImagesListViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
         }
     }
-    // MARK: - Cell Configuration
     
+    // MARK: - Cell Configuration
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
-        guard let photo = presenter.photoForIndexPath(indexPath) else { return }
+        guard let photo = presenter.photoForIndexPath(indexPath) else {
+            cell.cellImage.image = UIImage(named: "placeholder_error")
+            return
+        }
         
         cell.cellImage.kf.indicatorType = .activity
         if let url = URL(string: photo.thumbImageURL) {
-            cell.cellImage.kf.setImage(with: url)
-        } else {
-            cell.cellImage.image = UIImage(named: "placeholder")
+            cell.cellImage.kf.setImage(
+                with: url,
+                placeholder: UIImage(named: "placeholder"),
+                options: [.transition(.fade(0.2))]
+            ) { [weak cell] result in
+                if case .failure = result {
+                    cell?.cellImage.image = UIImage(named: "placeholder_error")
+                }
+            }
         }
         
-        let formattedDate = dateFormatter.string(from: photo.createdAt ?? Date())
-        cell.dateLabel.text = formattedDate
-        
+        cell.dateLabel.text = dateFormatter.string(from: photo.createdAt ?? Date())
         cell.setIsLiked(photo.isLiked)
     }
 }
-// MARK: - UITableViewDataSource
 
+// MARK: - UITableViewDataSource
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return presenter.photos.count
+        return presenter.photosCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
-        
-        guard let imageListCell = cell as? ImagesListCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath) as? ImagesListCell else {
             return UITableViewCell()
         }
         
-        imageListCell.delegate = self
-        configCell(for: imageListCell, with: indexPath)
-        return imageListCell
+        cell.delegate = self
+        configCell(for: cell, with: indexPath)
+        return cell
     }
 }
-// MARK: - UITableViewDelegate
 
+// MARK: - UITableViewDelegate
 extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: showSingleImageSegueIdentifier, sender: indexPath)
+        performSegue(withIdentifier: SegueIdentifiers.showSingleImage, sender: indexPath)
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -105,27 +114,23 @@ extension ImagesListViewController: UITableViewDelegate {
         return presenter.calculateCellHeight(for: indexPath, tableView: tableView)
     }
 }
-// MARK: - ImagesListCellDelegate
 
+// MARK: - ImagesListCellDelegate
 extension ImagesListViewController: ImagesListCellDelegate {
     func imagesListCellDidTapLike(in cell: ImagesListCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         presenter.changeLike(at: indexPath)
     }
 }
-// MARK: - ImagesListViewProtocol
 
+// MARK: - ImagesListViewProtocol
 extension ImagesListViewController: ImagesListViewProtocol {
     func updateTableViewAnimated(oldCount: Int, newCount: Int) {
+        guard oldCount != newCount else { return }
+        
         tableView.performBatchUpdates({
-            if oldCount > newCount {
-                let indicesToDelete = (newCount..<oldCount).map { IndexPath(row: $0, section: 0) }
-                tableView.deleteRows(at: indicesToDelete, with: .fade)
-            }
-            if oldCount < newCount {
-                let indicesToInsert = (oldCount..<newCount).map { IndexPath(row: $0, section: 0) }
-                tableView.insertRows(at: indicesToInsert, with: .fade)
-            }
+            let indexPaths = (oldCount..<newCount).map { IndexPath(row: $0, section: 0) }
+            tableView.insertRows(at: indexPaths, with: .automatic)
         }, completion: nil)
     }
     
@@ -133,22 +138,21 @@ extension ImagesListViewController: ImagesListViewProtocol {
         tableView.reloadRows(at: [indexPath], with: .automatic)
     }
     
-    func blockProgressHUDOn() {
+    func showLoadingIndicator() {
         UIBlockingProgressHUD.animate()
     }
     
-    func blockProgressHUDOff() {
+    func hideLoadingIndicator() {
         UIBlockingProgressHUD.dismiss()
     }
     
     func showErrorAlert(message: String) {
-        let alertController = UIAlertController(
+        let alert = UIAlertController(
             title: "Ошибка",
             message: message,
             preferredStyle: .alert
         )
-        let okAction = UIAlertAction(title: "ОК", style: .default)
-        alertController.addAction(okAction)
-        present(alertController, animated: true)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }

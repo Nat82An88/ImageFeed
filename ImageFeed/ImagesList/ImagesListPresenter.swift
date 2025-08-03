@@ -3,104 +3,85 @@ import Foundation
 
 final class ImagesListPresenter: ImagesListPresenterProtocol {
     // MARK: - Properties
-    
-    private let imagesListService: ImagesListService
     weak var view: ImagesListViewProtocol?
-    private(set) var photos: [Photo] = []
+    private let imagesListService: ImagesListServiceProtocol
+    
+    var photosCount: Int {
+        return imagesListService.photos.count
+    }
+    
+    var photos: [Photo] {
+        return imagesListService.photos
+    }
+    
     // MARK: - Initialization
-    
-    init(imagesListService: ImagesListService = ImagesListService()) {
+    init(imagesListService: ImagesListServiceProtocol = ImagesListService()) {
         self.imagesListService = imagesListService
-        setupObservers()
     }
     
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-    // MARK: - Private Methods
-    
-    private func setupObservers() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handlePhotosUpdate),
-            name: ImagesListService.didChangeNotification,
-            object: nil
-        )
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handlePhotoUpdate),
-            name: ImagesListService.photoUpdatedNotification,
-            object: nil
-        )
-    }
-    
-    @objc private func handlePhotosUpdate() {
-        let oldCount = photos.count
-        let newCount = imagesListService.photos.count
-        photos = imagesListService.photos
-        view?.updateTableViewAnimated(oldCount: oldCount, newCount: newCount)
-    }
-    
-    @objc private func handlePhotoUpdate(notification: Notification) {
-        guard let index = notification.object as? Int else { return }
-        let indexPath = IndexPath(row: index, section: 0)
-        view?.updatePhoto(at: indexPath)
-    }
     // MARK: - Public Methods
-    
     func viewDidLoad() {
-        imagesListService.fetchPhotosNextPage()
+        loadNextPhotos()
     }
     
     func willDisplayCell(at indexPath: IndexPath) {
-        if indexPath.row + 1 == photos.count {
-            imagesListService.fetchPhotosNextPage()
+        if indexPath.row + 1 == photosCount && !imagesListService.isLoading {
+            loadNextPhotos()
         }
     }
     
     func calculateCellHeight(for indexPath: IndexPath, tableView: UITableView) -> CGFloat {
-        guard indexPath.row < photos.count else { return 0 }
+        guard indexPath.row < photosCount else { return 0 }
         
         let photo = photos[indexPath.row]
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
-        let imageWidth = photo.size.width
-        let scale = imageViewWidth / imageWidth
-        let cellHeight = photo.size.height * scale + imageInsets.top + imageInsets.bottom
-        return cellHeight
+        let scale = imageViewWidth / photo.size.width
+        return photo.size.height * scale + imageInsets.top + imageInsets.bottom
     }
     
     func changeLike(at indexPath: IndexPath) {
-        guard indexPath.row < photos.count else { return }
+        guard indexPath.row < photosCount else { return }
         
         let photo = photos[indexPath.row]
-        view?.blockProgressHUDOn()
+        view?.showLoadingIndicator()
         
         imagesListService.changeLike(photoId: photo.id, isLiked: !photo.isLiked) { [weak self] result in
-            guard let self = self else { return }
+            guard let self else { return }
             
             DispatchQueue.main.async {
-                self.view?.blockProgressHUDOff()
+                self.view?.hideLoadingIndicator()
                 
                 switch result {
                 case .success:
-                    break
+                    self.view?.updatePhoto(at: indexPath)
                 case .failure(let error):
                     self.view?.showErrorAlert(message: error.localizedDescription)
-                    if let index = self.photos.firstIndex(where: { $0.id == photo.id }) {
-                        var updatedPhoto = self.photos[index]
-                        updatedPhoto.isLiked = photo.isLiked
-                        self.photos[index] = updatedPhoto
-                        self.view?.updatePhoto(at: indexPath)
-                    }
+                    self.view?.updatePhoto(at: indexPath)
                 }
             }
         }
     }
     
     func photoForIndexPath(_ indexPath: IndexPath) -> Photo? {
-        guard indexPath.row < photos.count else { return nil }
+        guard photos.indices.contains(indexPath.row) else { return nil }
         return photos[indexPath.row]
+    }
+    
+    // MARK: - Private Methods
+    private func loadNextPhotos() {
+        imagesListService.fetchPhotosNextPage { [weak self] result in
+            guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let newPhotos):
+                    let oldCount = self.photosCount - newPhotos.count
+                    self.view?.updateTableViewAnimated(oldCount: oldCount, newCount: self.photosCount)
+                case .failure(let error):
+                    self.view?.showErrorAlert(message: error.localizedDescription)
+                }
+            }
+        }
     }
 }
