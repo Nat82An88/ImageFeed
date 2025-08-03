@@ -13,6 +13,14 @@ final class TabBarController: UITabBarController {
             withIdentifier: "ImagesListViewController"
         )
         let profileViewController = ProfileViewController()
+        let profilePresenter = ProfilePresenter(
+            profileService: ProfileService.shared,
+            profileImageService: ProfileImageService.shared,
+            tokenStorage: OAuth2TokenStorage.shared,
+            logoutService: ProfileLogoutService.shared
+        )
+        profileViewController.configure(profilePresenter)
+        
         profileViewController.tabBarItem = UITabBarItem(
             title: "",
             image: UIImage(named: "tab_profile_active"),

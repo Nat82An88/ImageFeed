@@ -74,5 +74,6 @@ final class ProfileService {
     enum NetworkError: Error {
         case invalidURL
         case noData
+        case noToken
     }
 }
