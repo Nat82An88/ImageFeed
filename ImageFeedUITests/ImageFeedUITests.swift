@@ -50,8 +50,8 @@ class Image_FeedUITests: XCTestCase {
         let cellToLike = tablesQuery.children(matching: .cell).element(boundBy: 1)
         XCTAssertTrue(cellToLike.waitForExistence(timeout: 2))
         
-        cellToLike.buttons["like button off"].tap()
-        cellToLike.buttons["like button on"].tap()
+        cellToLike.buttons["notActive"].tap()
+        cellToLike.buttons["Active"].tap()
         
         XCTAssertTrue(cellToLike.waitForExistence(timeout: 2))
         
@@ -63,7 +63,7 @@ class Image_FeedUITests: XCTestCase {
         image.pinch(withScale: 3, velocity: 1)
         image.pinch(withScale: 0.5, velocity: -1)
         
-        let navBackButtonWhiteButton = app.buttons["nav back button white"]
+        let navBackButtonWhiteButton = app.buttons["Backward"]
         XCTAssertTrue(navBackButtonWhiteButton.waitForExistence(timeout: 2))
         navBackButtonWhiteButton.tap()
     }
@@ -76,10 +76,15 @@ class Image_FeedUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["Name Lastname"].waitForExistence(timeout: 2))
         XCTAssertTrue(app.staticTexts["@username"].waitForExistence(timeout: 2))
         
-        app.buttons["logout button"].tap()
+        let logoutButton = app.buttons["Exit"]
+        XCTAssertTrue(logoutButton.waitForExistence(timeout: 2))
+        logoutButton.tap()
         
-        let logoutAlertButton = app.alerts["Bye bye!"].scrollViews.otherElements.buttons["Yes"]
-        XCTAssertTrue(logoutAlertButton.waitForExistence(timeout: 2))
-        logoutAlertButton.tap()
+        let logoutAlert = app.alerts["Пока, пока!"]
+        XCTAssertTrue(logoutAlert.waitForExistence(timeout: 2))
+        
+        let confirmButton = logoutAlert.buttons["Да"]
+        XCTAssertTrue(confirmButton.waitForExistence(timeout: 1))
+        confirmButton.tap()
     }
 }
