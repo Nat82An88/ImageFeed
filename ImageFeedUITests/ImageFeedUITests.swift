@@ -63,22 +63,32 @@ class Image_FeedUITests: XCTestCase {
         XCTAssertTrue(secondCell.waitForExistence(timeout: 10))
         
         let likeButton = secondCell.buttons["notActive"]
-        XCTAssertTrue(likeButton.waitForExistence(timeout: 5))
-        let initialLikeState = likeButton.exists
-        likeButton.tap()
+        let activeLikeButton = secondCell.buttons["Active"]
+        let likeButtonExists = likeButton.waitForExistence(timeout: 5)
+        let activeLikeButtonExists = activeLikeButton.waitForExistence(timeout: 5)
+        XCTAssertTrue(likeButtonExists || activeLikeButtonExists)
+        
+        let isInitiallyLiked = activeLikeButtonExists
+        
+        if isInitiallyLiked {
+            activeLikeButton.tap()
+            sleep(3)
+            XCTAssertTrue(likeButton.waitForExistence(timeout: 5))
+            likeButton.tap()
+        } else {
+            likeButton.tap()
+            sleep(3)
+            XCTAssertTrue(activeLikeButton.waitForExistence(timeout: 5))
+            activeLikeButton.tap()
+        }
         
         sleep(3)
         
-        if initialLikeState {
-            let activeLikeButton = secondCell.buttons["Active"]
+        if isInitiallyLiked {
             XCTAssertTrue(activeLikeButton.waitForExistence(timeout: 5))
-            activeLikeButton.tap()
-            sleep(3)
         } else {
-            let inactiveLikeButton = secondCell.buttons["notActive"]
-            XCTAssertTrue(inactiveLikeButton.waitForExistence(timeout: 5))
+            XCTAssertTrue(likeButton.waitForExistence(timeout: 5))
         }
-        
         secondCell.tap()
         
         let image = app.scrollViews.images.firstMatch
