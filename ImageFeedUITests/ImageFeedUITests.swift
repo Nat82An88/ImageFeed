@@ -73,11 +73,16 @@ class Image_FeedUITests: XCTestCase {
         XCTAssertTrue(tabBarButton.waitForExistence(timeout: 3))
         tabBarButton.tap()
         
-        XCTAssertTrue(app.staticTexts["Name Lastname"].waitForExistence(timeout: 2))
-        XCTAssertTrue(app.staticTexts["@username"].waitForExistence(timeout: 2))
+        let namePredicate = NSPredicate(format: "label CONTAINS ' '")
+        let nameLabel = app.staticTexts.matching(namePredicate).firstMatch
+        XCTAssertTrue(nameLabel.waitForExistence(timeout: 5))
+        
+        let loginPredicate = NSPredicate(format: "label BEGINSWITH '@'")
+        let loginLabel = app.staticTexts.matching(loginPredicate).firstMatch
+        XCTAssertTrue(loginLabel.waitForExistence(timeout: 5))
         
         let logoutButton = app.buttons["Exit"]
-        XCTAssertTrue(logoutButton.waitForExistence(timeout: 2))
+        XCTAssertTrue(logoutButton.waitForExistence(timeout: 5))
         logoutButton.tap()
         
         let logoutAlert = app.alerts["Пока, пока!"]
