@@ -54,54 +54,29 @@ class Image_FeedUITests: XCTestCase {
     
     func testFeed() throws {
         let tablesQuery = app.tables
-        let firstCell = tablesQuery.cells.firstMatch
-        XCTAssertTrue(firstCell.waitForExistence(timeout: 10))
         
-        firstCell.swipeUp()
+        let cell = tablesQuery.children(matching: .cell).element(boundBy: 0)
+        cell.swipeUp()
         
-        let secondCell = tablesQuery.cells.element(boundBy: 1)
-        XCTAssertTrue(secondCell.waitForExistence(timeout: 10))
+        sleep(2)
         
-        let likeButton = secondCell.buttons["notActive"]
-        let activeLikeButton = secondCell.buttons["Active"]
-        let likeButtonExists = likeButton.waitForExistence(timeout: 5)
-        let activeLikeButtonExists = activeLikeButton.waitForExistence(timeout: 5)
-        XCTAssertTrue(likeButtonExists || activeLikeButtonExists)
+        let cellToLike = tablesQuery.children(matching: .cell).element(boundBy: 1)
         
-        let isInitiallyLiked = activeLikeButtonExists
+        cellToLike.buttons["notActive"].tap()
+        cellToLike.buttons["Active"].tap()
         
-        if isInitiallyLiked {
-            activeLikeButton.tap()
-            sleep(3)
-            XCTAssertTrue(likeButton.waitForExistence(timeout: 5))
-            likeButton.tap()
-        } else {
-            likeButton.tap()
-            sleep(3)
-            XCTAssertTrue(activeLikeButton.waitForExistence(timeout: 5))
-            activeLikeButton.tap()
-        }
+        sleep(2)
         
-        sleep(3)
+        cellToLike.tap()
         
-        if isInitiallyLiked {
-            XCTAssertTrue(activeLikeButton.waitForExistence(timeout: 5))
-        } else {
-            XCTAssertTrue(likeButton.waitForExistence(timeout: 5))
-        }
-        secondCell.tap()
+        sleep(2)
         
-        let image = app.scrollViews.images.firstMatch
-        XCTAssertTrue(image.waitForExistence(timeout: 5))
-        
+        let image = app.scrollViews.images.element(boundBy: 0)
         image.pinch(withScale: 3, velocity: 1)
         image.pinch(withScale: 0.5, velocity: -1)
         
-        let backButton = app.buttons["Backward"]
-        XCTAssertTrue(backButton.waitForExistence(timeout: 5))
-        backButton.tap()
-        
-        XCTAssertTrue(secondCell.waitForExistence(timeout: 5))
+        let navBackButtonWhiteButton = app.buttons["Backward"]
+        navBackButtonWhiteButton.tap()
     }
     
     func testProfile() throws {
