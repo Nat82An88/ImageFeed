@@ -68,7 +68,6 @@ final class ProfileService {
             completion(.failure(error))
         }
     }
-    
     // MARK: - Error Handling
     
     enum NetworkError: Error {

@@ -6,72 +6,89 @@ class Image_FeedUITests: XCTestCase {
     
     override func setUpWithError() throws {
         continueAfterFailure = false
-        
         app.launch()
     }
     
+    override func tearDownWithError() throws {
+        app.terminate()
+    }
+    
     func testAuth() throws {
-        func testAuth() throws {
-            app.buttons["Authenticate"].tap()
-            
-            let webView = app.webViews["UnsplashWebView"]
-            
-            XCTAssertTrue(webView.waitForExistence(timeout: 5))
-            
-            let loginTextField = webView.descendants(matching: .textField).element
-            XCTAssertTrue(loginTextField.waitForExistence(timeout: 5))
-            
-            loginTextField.tap()
-            loginTextField.typeText("Email@example.com")
-            webView.swipeUp()
-            
-            let passwordTextField = webView.descendants(matching: .secureTextField).element
-            XCTAssertTrue(passwordTextField.waitForExistence(timeout: 5))
-            
-            passwordTextField.tap()
-            passwordTextField.typeText("Password")
-            webView.swipeUp()
-            
-            webView.buttons["Login"].tap()
-            
-            let tablesQuery = app.tables
-            let cell = tablesQuery.children(matching: .cell).element(boundBy: 0)
-            
-            XCTAssertTrue(cell.waitForExistence(timeout: 5))
-        }
+        let authButton = app.buttons["Authenticate"]
+        XCTAssertTrue(authButton.waitForExistence(timeout: 10))
+        authButton.tap()
+        
+        let webView = app.webViews["UnsplashWebView"]
+        XCTAssertTrue(webView.waitForExistence(timeout: 10))
+        
+        let loginTextField = webView.descendants(matching: .textField).element
+        XCTAssertTrue(loginTextField.waitForExistence(timeout: 10))
+        loginTextField.tap()
+        loginTextField.typeText("Login@example.com")
+        
+        webView.swipeUp()
+        
+        let passwordTextField = webView.descendants(matching: .secureTextField).element
+        XCTAssertTrue(passwordTextField.waitForExistence(timeout: 10))
+        passwordTextField.tap()
+        passwordTextField.typeText("Password")
+        
+        webView.swipeUp()
+        webView.buttons["Login"].tap()
+        
+        let firstCell = app.tables.cells.firstMatch
+        XCTAssertTrue(firstCell.waitForExistence(timeout: 10))
     }
     
     func testFeed() throws {
         let tablesQuery = app.tables
+        let firstCell = tablesQuery.cells.firstMatch
+        XCTAssertTrue(firstCell.waitForExistence(timeout: 10))
         
-        let cell = tablesQuery.children(matching: .cell).element(boundBy: 0)
-        cell.swipeUp()
+        firstCell.swipeUp()
         
-        let cellToLike = tablesQuery.children(matching: .cell).element(boundBy: 1)
-        XCTAssertTrue(cellToLike.waitForExistence(timeout: 2))
+        let secondCell = tablesQuery.cells.element(boundBy: 1)
+        XCTAssertTrue(secondCell.waitForExistence(timeout: 10))
         
-        cellToLike.buttons["notActive"].tap()
-        cellToLike.buttons["Active"].tap()
+        let likeButton = secondCell.buttons["notActive"]
+        XCTAssertTrue(likeButton.waitForExistence(timeout: 5))
+        likeButton.tap()
         
-        XCTAssertTrue(cellToLike.waitForExistence(timeout: 2))
+        let activeLikeButton = secondCell.buttons["Active"]
+        XCTAssertTrue(activeLikeButton.waitForExistence(timeout: 5))
+        activeLikeButton.tap()
         
-        cellToLike.tap()
+        secondCell.tap()
         
-        let image = app.scrollViews.images.element(boundBy: 0)
-        XCTAssertTrue(image.waitForExistence(timeout: 2))
+        let image = app.scrollViews.images.firstMatch
+        XCTAssertTrue(image.waitForExistence(timeout: 5))
         
         image.pinch(withScale: 3, velocity: 1)
         image.pinch(withScale: 0.5, velocity: -1)
         
-        let navBackButtonWhiteButton = app.buttons["Backward"]
-        XCTAssertTrue(navBackButtonWhiteButton.waitForExistence(timeout: 2))
-        navBackButtonWhiteButton.tap()
+        let backButton = app.buttons["Backward"]
+        XCTAssertTrue(backButton.waitForExistence(timeout: 5))
+        backButton.tap()
+        
+        XCTAssertTrue(secondCell.waitForExistence(timeout: 5))
     }
     
     func testProfile() throws {
-        let tabBarButton = app.tabBars.buttons.element(boundBy: 1)
-        XCTAssertTrue(tabBarButton.waitForExistence(timeout: 3))
-        tabBarButton.tap()
+        sleep(2)
+        
+        let tabBar = app.tabBars.firstMatch
+        XCTAssertTrue(tabBar.waitForExistence(timeout: 10))
+        
+        let tabBarButtons = tabBar.buttons.allElementsBoundByIndex
+        guard tabBarButtons.count >= 2 else {
+            XCTFail("Не найдена кнопка профиля в таббаре")
+            return
+        }
+        
+        let profileTab = tabBarButtons.last!
+        profileTab.tap()
+        
+        sleep(2)
         
         let namePredicate = NSPredicate(format: "label CONTAINS ' '")
         let nameLabel = app.staticTexts.matching(namePredicate).firstMatch
@@ -86,10 +103,13 @@ class Image_FeedUITests: XCTestCase {
         logoutButton.tap()
         
         let logoutAlert = app.alerts["Пока, пока!"]
-        XCTAssertTrue(logoutAlert.waitForExistence(timeout: 2))
+        XCTAssertTrue(logoutAlert.waitForExistence(timeout: 5))
         
         let confirmButton = logoutAlert.buttons["Да"]
-        XCTAssertTrue(confirmButton.waitForExistence(timeout: 1))
+        XCTAssertTrue(confirmButton.waitForExistence(timeout: 5))
         confirmButton.tap()
+        
+        let authButton = app.buttons["Authenticate"]
+        XCTAssertTrue(authButton.waitForExistence(timeout: 5))
     }
 }

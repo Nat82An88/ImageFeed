@@ -9,7 +9,6 @@ struct OAuthTokenResponseBody: Decodable {
     let userId: Int
     let username: String
     
-    
     enum CodingKeys: String, CodingKey {
         case accessToken = "access_token"
         case tokenType = "token_type"
@@ -19,6 +18,7 @@ struct OAuthTokenResponseBody: Decodable {
         case userId = "user_id"
         case username
     }
+    
     init (from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         accessToken = try container.decodeIfPresent(String.self, forKey: .accessToken)

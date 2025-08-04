@@ -25,6 +25,7 @@ struct AuthConfiguration {
         self.defaultBaseURL = defaultBaseURL
         self.authURLString = authURLString
     }
+    
     static var standard: AuthConfiguration {
         return AuthConfiguration(accessKey: Constants.accessKey,
                                  secretKey: Constants.secretKey,

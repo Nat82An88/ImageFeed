@@ -39,13 +39,13 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     }
     
     func handleAvatarUpdate(_ notification: Notification) {
-            guard let urlString = notification.userInfo?["URL"] as? String,
-                  let url = URL(string: urlString) else {
-                view?.showDefaultAvatar()
-                return
-            }
-            view?.updateAvatar(url: url)
+        guard let urlString = notification.userInfo?["URL"] as? String,
+              let url = URL(string: urlString) else {
+            view?.showDefaultAvatar()
+            return
         }
+        view?.updateAvatar(url: url)
+    }
     // MARK: - Private Methods
     
     private func fetchProfileData() {

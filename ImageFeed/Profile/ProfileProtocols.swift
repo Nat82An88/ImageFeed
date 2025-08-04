@@ -1,5 +1,5 @@
 import Foundation
- public protocol ProfilePresenterProtocol: AnyObject {
+public protocol ProfilePresenterProtocol: AnyObject {
     var view: ProfileViewControllerProtocol? { get set }
     func viewDidLoad()
     func performLogout()

@@ -29,5 +29,4 @@ final class ProfileLogoutService {
         ProfileService.shared.reset()
         ProfileImageService.shared.reset()
     }
-    
 }
