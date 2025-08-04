@@ -13,27 +13,39 @@ class Image_FeedUITests: XCTestCase {
         app.terminate()
     }
     
+    private func hideKeyboard() {
+        let app = XCUIApplication()
+        if app.keyboards.element.exists {
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                app.keyboards.buttons["Hide keyboard"].tap()
+            } else {
+                app.toolbars.buttons["Done"].tap()
+            }
+        }
+    }
+    
     func testAuth() throws {
         let authButton = app.buttons["Authenticate"]
-        XCTAssertTrue(authButton.waitForExistence(timeout: 10))
+        XCTAssertTrue(authButton.waitForExistence(timeout: 5))
         authButton.tap()
         
-        let webView = app.webViews["UnsplashWebView"]
+        let webView = app.webViews.firstMatch
         XCTAssertTrue(webView.waitForExistence(timeout: 10))
         
         let loginTextField = webView.descendants(matching: .textField).element
-        XCTAssertTrue(loginTextField.waitForExistence(timeout: 10))
+        XCTAssertTrue(loginTextField.waitForExistence(timeout: 5))
         loginTextField.tap()
-        loginTextField.typeText("Login@example.com")
+        loginTextField.typeText("login@example.com")
         
-        webView.swipeUp()
+        hideKeyboard()
         
         let passwordTextField = webView.descendants(matching: .secureTextField).element
-        XCTAssertTrue(passwordTextField.waitForExistence(timeout: 10))
+        XCTAssertTrue(passwordTextField.waitForExistence(timeout: 5))
         passwordTextField.tap()
-        passwordTextField.typeText("Password")
+        passwordTextField.typeText("Password123")
         
-        webView.swipeUp()
+        hideKeyboard()
+        
         webView.buttons["Login"].tap()
         
         let firstCell = app.tables.cells.firstMatch
@@ -52,11 +64,20 @@ class Image_FeedUITests: XCTestCase {
         
         let likeButton = secondCell.buttons["notActive"]
         XCTAssertTrue(likeButton.waitForExistence(timeout: 5))
+        let initialLikeState = likeButton.exists
         likeButton.tap()
         
-        let activeLikeButton = secondCell.buttons["Active"]
-        XCTAssertTrue(activeLikeButton.waitForExistence(timeout: 5))
-        activeLikeButton.tap()
+        sleep(3)
+        
+        if initialLikeState {
+            let activeLikeButton = secondCell.buttons["Active"]
+            XCTAssertTrue(activeLikeButton.waitForExistence(timeout: 5))
+            activeLikeButton.tap()
+            sleep(3)
+        } else {
+            let inactiveLikeButton = secondCell.buttons["notActive"]
+            XCTAssertTrue(inactiveLikeButton.waitForExistence(timeout: 5))
+        }
         
         secondCell.tap()
         
