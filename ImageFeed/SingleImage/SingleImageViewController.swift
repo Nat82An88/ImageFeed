@@ -3,7 +3,6 @@ import Kingfisher
 import ProgressHUD
 
 final class SingleImageViewController: UIViewController {
-    
     // MARK: - Public Properties
     
     var image: UIImage?
@@ -88,6 +87,7 @@ extension SingleImageViewController: UIScrollViewDelegate {
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
     }
+    
     func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
         guard let image else { return }
         rescaleAndCenterImageInScrollView(image: image)

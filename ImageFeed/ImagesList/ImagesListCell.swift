@@ -6,7 +6,6 @@ protocol ImagesListCellDelegate: AnyObject {
 }
 
 final class ImagesListCell: UITableViewCell {
-    
     weak var delegate: ImagesListCellDelegate?
     // MARK: - IB Outlets
     

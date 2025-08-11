@@ -5,7 +5,6 @@ enum AuthServiceError: Error {
 }
 
 final class OAuth2Service {
-    
     // MARK: - Private Properties
     
     private let urlSession = URLSession.shared

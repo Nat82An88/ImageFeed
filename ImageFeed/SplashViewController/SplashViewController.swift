@@ -1,7 +1,6 @@
 import UIKit
 
 final class SplashViewController: UIViewController {
-    
     // MARK: - Private Properties
     
     private let oauth2Service = OAuth2Service.shared
@@ -63,32 +62,34 @@ final class SplashViewController: UIViewController {
             .instantiateViewController(withIdentifier: "TabBarViewController")
         window.rootViewController = tabBarController
     }
+    
     private func showAuthViewController() {
         guard let authViewController = UIStoryboard(name: "Main", bundle: .main)
             .instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController else {
             fatalError("Не удалось создать AuthViewController")
         }
-        
         authViewController.delegate = self
         authViewController.modalPresentationStyle = .fullScreen
         present(authViewController, animated: true, completion: nil)
     }
 }
-
 // MARK: - AuthViewControllerDelegate
 
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
-        dismiss(animated: true)
         fetchOAuthToken(code)
+        dismiss(animated: true)
     }
     
     private func fetchOAuthToken(_ code: String) {
         oauth2Service.fetchOAuthToken(code: code) { [weak self] result in
             guard let self else { return }
             switch result {
-            case .success:
-                self.switchToTabBarController()
+            case .success(let token):
+                self.oauth2TokenStorage.token = token
+                DispatchQueue.main.async {
+                    self.switchToTabBarController()
+                }
             case .failure:
                 self.showAuthViewController()
                 break

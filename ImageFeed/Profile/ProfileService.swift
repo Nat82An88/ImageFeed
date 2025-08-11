@@ -1,7 +1,6 @@
 import UIKit
 
 final class ProfileService {
-    
     // MARK: - Private Properties
     
     private let urlSession = URLSession.shared
@@ -69,11 +68,11 @@ final class ProfileService {
             completion(.failure(error))
         }
     }
-    
     // MARK: - Error Handling
     
     enum NetworkError: Error {
         case invalidURL
         case noData
+        case noToken
     }
 }

@@ -1,10 +1,12 @@
 import UIKit
 
 final class TabBarController: UITabBarController {
+    // MARK: - View Life Cycles
     
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    
     override func awakeFromNib() {
         super.awakeFromNib()
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
@@ -12,6 +14,14 @@ final class TabBarController: UITabBarController {
             withIdentifier: "ImagesListViewController"
         )
         let profileViewController = ProfileViewController()
+        let profilePresenter = ProfilePresenter(
+            profileService: ProfileService.shared,
+            profileImageService: ProfileImageService.shared,
+            tokenStorage: OAuth2TokenStorage.shared,
+            logoutService: ProfileLogoutService.shared
+        )
+        profileViewController.configure(profilePresenter)
+        
         profileViewController.tabBarItem = UITabBarItem(
             title: "",
             image: UIImage(named: "tab_profile_active"),
@@ -19,5 +29,4 @@ final class TabBarController: UITabBarController {
         )
         self.viewControllers = [imagesListViewController, profileViewController]
     }
-    
 }
